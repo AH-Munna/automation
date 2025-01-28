@@ -41,21 +41,16 @@ def paste_texts(board_name, board_pos):
     moveTo(current_left + 100, current_top + (board_pos * 50), duration=0.2)
     click()
 
-def select_next_pin():
-    selected_pin_loc = find_image('images/pin_upload/pin-selected.png', 0.8)
-    click(selected_pin_loc.left + 50, selected_pin_loc.top + 50)
-
 # code starto
 def pinterest_upload():
     num_of_image = int(input("Number of images: "))
     board_name = input("Board name: ")
     board_pos = int(input("Board position: "))
 
-    click(750, screenHeight-25)
+    click(find_image('images/tabs/pinterest_chrome.png', 0.8))
 
     for i in range(num_of_image):
         create_new()
         sleep(0.5)
         paste_texts(board_name, board_pos)
         print("Image", i+1, "uploaded")
-        # select_next_pin()
