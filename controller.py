@@ -13,7 +13,7 @@ def task_executed():
     sys.exit("\033[32mtask executed!\033[0m")
 
 # code starto
-print("\033[32mWelcome to the controller. What would you like to do?\033[96m \n1) Create a pin \n2) Download ideogram \n3) Upload a pin \n4) Tag a pin \n5) Exit\033[0m\n\n")
+print("\033[32mWelcome to the controller. What would you like to do?\033[96m \n1) Create a pin from deepseek to ideogram \n2) Download ideogram generated images \n3) Upload pin images \n4) Tag pins and publish \n5) Exit\033[0m\n\n")
 try:
     choice = int(input("\033[32mChoice: \033[0m"))
     if choice > 0 and choice < 5:

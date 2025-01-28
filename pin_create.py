@@ -9,7 +9,7 @@ def deepseek_paste_and_copy():
     click(previos_title_edit_loc.left + 120, previos_title_edit_loc.top + 40, duration=1)
 
     x, y = position()
-    moveTo(x + 100, y)
+    moveTo(x + 100, y, duration=0.5)
     hotkey('ctrl', 'a')
     hotkey('ctrl', 'v')
 
