@@ -2,27 +2,28 @@ from pyautogui import click, moveTo, hotkey, size, hotkey, write, position, doub
 from time import sleep
 from helper.find_image import find_image
 from helper.pyscreensize import screenHeight
-# import sys
+import sys
 
 def create_new():
-    click(find_image('images/pin_upload/new-pin.png', 0.8))
-    click(find_image('images/pin_upload/pic-upload.png', 0.8))
+    click(find_image('images/pin_upload/new-pin.png', 0.8), duration=0.5)
+    click(find_image('images/pin_upload/pic-upload.png', 0.8), duration=0.5)
 
     slectable_image_loc = find_image('images/pin_upload/pic-select.png', 0.8)
-    click(slectable_image_loc.left + 150, slectable_image_loc.top + 150)
+    click(slectable_image_loc.left + 150, slectable_image_loc.top + 150, duration=0.5)
+    sleep(0.5)
     hotkey('delete')
+    sleep(0.5)
     doubleClick()
+    sleep(0.5)
 
 def paste_texts(board_name, board_pos):
     def handle_clipboard(image_name, top=0):
         input_loc = find_image(image_name, 0.8)
-        moveTo(input_loc.left + 100, input_loc.top + 50)
-        click()
+        click(input_loc.left + 100, input_loc.top + 50, duration=0.5)
         hotkey('ctrl', 'a')
         hotkey('win', 'v')
         clipboard_loc = find_image('images/clipboard.png', 0.8)
-        moveTo(clipboard_loc.left+150, clipboard_loc.top+top)
-        click()
+        click(clipboard_loc.left+150, clipboard_loc.top+top, duration=0.5)
 
     handle_clipboard('images/pin_upload/pin-title.png', 330)
     handle_clipboard('images/pin_upload/pin-description.png', 250)
@@ -30,15 +31,14 @@ def paste_texts(board_name, board_pos):
 
     # board
     pin_board_location = find_image('images/pin_upload/pin-board.png', 0.8)
-    moveTo(pin_board_location.left + 200, pin_board_location.top + 40)
-    click()
+    click(pin_board_location.left + 200, pin_board_location.top + 40, duration=0.5)
     pin_search_location = find_image('images/pin_upload/pin-search.png', 0.8)
-    moveTo(pin_search_location.left + 200, pin_search_location.top + 40)
-    click()
+    click(pin_search_location.left + 200, pin_search_location.top + 40, duration=0.5)
+
     hotkey('ctrl', 'a')
     write(board_name)
     current_left, current_top = position()
-    moveTo(current_left + 100, current_top + (board_pos * 50), duration=0.2)
+    moveTo(current_left - 120, current_top + (board_pos * 50), duration=0.2)
     click()
 
 # code starto
@@ -54,3 +54,4 @@ def pinterest_upload():
         sleep(0.5)
         paste_texts(board_name, board_pos)
         print("Image", i+1, "uploaded")
+        sleep(1)

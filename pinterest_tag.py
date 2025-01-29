@@ -14,36 +14,32 @@ def select_next_pin():
     click()
     
 def copy_tag (tag_num):
-    moveTo(500, screenHeight-25)
-    click()
+    click(find_image('images/tabs/notepad.png', 0.9), duration=0.5)
 
     moveTo(18, 85 + (tag_num * 36))
     click(clicks=3)
     hotkey('ctrl', 'c')
 
 def paste_tag ():
-    moveTo(750, screenHeight-25)
-    click()
+    click(find_image('images/tabs/pinterest_chrome.png', 0.9), duration=0.5)
 
     tagbox_loc = find_image('images/tagbox-warning.png', 0.6)
-    moveTo(tagbox_loc.left + 100, tagbox_loc.top - 35)
-    click()
+    click(tagbox_loc.left + 100, tagbox_loc.top - 35, duration=0.5)
     hotkey('ctrl', 'a')
     hotkey('ctrl', 'v')
 
     matched_tags_loc = find_image('images/matched-tags.png', 0.6)
-    moveTo(matched_tags_loc.left + 50, matched_tags_loc.top + 60)
-    click()
+    moveTo(matched_tags_loc.left + 50, matched_tags_loc.top + 60, duration=0.5)
+    click(duration=0.5)
 
 def publish_post (post_num=1):
     find_image('images/tag-completed.png', 0.9)
     sleep(1)
-    moveTo(screenWidth-110, 235, duration=1)
-    click()
+    click(screenWidth-110, 235, duration=1)
+
     sleep(0.5)
-    moveTo((screenWidth/2) + 50, (screenHeight/2) + 150)
-    sleep(0.5)
-    click()
+    moveTo((screenWidth/2) + 50, (screenHeight/2) + 150, duration=0.5)
+    click(duration=0.5)
     print("Published post " + str(post_num))
     select_next_pin()
 
