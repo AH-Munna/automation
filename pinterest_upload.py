@@ -5,11 +5,12 @@ from helper.pyscreensize import screenHeight
 import sys
 
 def create_new():
-    click(find_image('images/pin_upload/new-pin.png', 0.8), duration=0.5)
-    click(find_image('images/pin_upload/pic-upload.png', 0.8), duration=0.5)
+    click(find_image('images/pin_upload/new_pin.png', 0.8), duration=0.5)
+    click(find_image('images/pin_upload/pic_upload.png', 0.8), duration=0.5)
 
-    slectable_image_loc = find_image('images/pin_upload/pic-select.png', 0.8)
-    click(slectable_image_loc.left + 150, slectable_image_loc.top + 150, duration=0.5)
+    # selectable_image_loc = find_image('images/pin_upload/pic_select.png', 0.8)
+    selectable_image_loc = find_image('images/pin_upload/pic_select_2.png', 0.8)
+    click(selectable_image_loc.left + 120, selectable_image_loc.top + 60, duration=0.5)
     sleep(0.5)
     hotkey('delete')
     sleep(0.5)
@@ -37,8 +38,10 @@ def paste_texts(board_name, board_pos):
 
     hotkey('ctrl', 'a')
     write(board_name)
+    sleep(0.5)
     current_left, current_top = position()
     moveTo(current_left - 120, current_top + (board_pos * 50), duration=0.2)
+    sleep(0.5)
     click()
 
 # code starto

@@ -9,7 +9,7 @@ def find_image(image, confidence=0.9, tries=8)-> dict[str, int]:
             return image_loc
         except:
             if k == tries:
-                sys.exit("Image not found", image)
+                sys.exit("\033[31mImage not found\033[0m")
     
     k = 0
     while(k < tries):
