@@ -25,7 +25,7 @@ def deepseek_paste_and_copy():
     click(copy_loc.left + 15, copy_loc.top + 20, duration=1)
 
 def title_prepare():
-    click(find_image('images/tabs/deepseek_title_prepare.png', 0.6), duration=1)
+    click(find_image('images/create_pin/title_dividing.png', 0.9), duration=1)
 
     previos_title_loc = find_image('images/create_pin/previous_title.png', 0.6)
     click(previos_title_loc.left + 500, previos_title_loc.top + 100, duration=1)
@@ -33,9 +33,9 @@ def title_prepare():
     deepseek_paste_and_copy()
 
 def prompt_create():
-    click(find_image('images/tabs/deepseek_image_prompt.png', 0.8), duration=1)
+    click(find_image('images/create_pin/image_prompt.png', 0.7), duration=1)
 
-    previous_prompt_loc = find_image('images/create_pin/previous_prompt.png', 0.6)
+    previous_prompt_loc = find_image('images/create_pin/previous_prompt.png', 0.7)
     moveTo(previous_prompt_loc.left + 500, previous_prompt_loc.top + 110, duration=1)
 
     deepseek_paste_and_copy()
@@ -50,7 +50,8 @@ def image_create():
     click(find_image('images/create_pin/ideogram_generate_button.png', 0.6), duration=1)
 
 def pin_create():
-    click(find_image('images/tabs/seasoninspired_chrome.png', 0.7))
+    click(find_image('images/tabs/seasoninspired_chrome.png', 0.7), duration=0.5)
+    click(find_image('images/tabs/deepseek.png', 0.7), duration=1)
     title_prepare()
     prompt_create()
     image_create()

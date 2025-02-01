@@ -21,7 +21,7 @@ def copy_tag (tag_num):
     hotkey('ctrl', 'c')
 
 def paste_tag ():
-    click(find_image('images/tabs/pinterest_chrome.png', 0.9))
+    click(find_image('images/tabs/pinterest_chrome.png', 0.8))
 
     tagbox_loc = find_image('images/tagbox-warning.png', 0.6)
     click(tagbox_loc.left + 100, tagbox_loc.top - 35)

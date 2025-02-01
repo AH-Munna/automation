@@ -11,11 +11,11 @@ def create_new():
     # selectable_image_loc = find_image('images/pin_upload/pic_select.png', 0.8)
     selectable_image_loc = find_image('images/pin_upload/pic_select_2.png', 0.8)
     click(selectable_image_loc.left + 120, selectable_image_loc.top + 60, duration=0.5)
-    sleep(0.5)
+    # sleep(0.3)
     hotkey('delete')
-    sleep(0.5)
+    sleep(0.3)
     doubleClick()
-    sleep(0.5)
+    # sleep(0.3)
 
 def paste_texts(board_name, board_pos):
     def handle_clipboard(image_name, top=0):
@@ -41,7 +41,7 @@ def paste_texts(board_name, board_pos):
     sleep(0.5)
     current_left, current_top = position()
     moveTo(current_left - 120, current_top + (board_pos * 50), duration=0.2)
-    sleep(0.5)
+    # sleep(0.5)
     click()
 
 # code starto

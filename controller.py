@@ -2,6 +2,7 @@ from ideogram_download import ideogram_download
 from pinterest_tag import pinterest_tag
 from pin_create import pin_create
 from pinterest_upload import pinterest_upload
+from upload_to_canva import upload_to_canva
 import sys
 from helper.find_image import find_image
 from pyautogui import click
@@ -23,7 +24,10 @@ try:
         pin_create()
         task_executed()
     elif choice == 2:
-        ideogram_download()
+        experimental_feature = input("\033[33mWould you like to run the experimental feature to upload to canva? (y/n): \033[0m")
+        # ideogram_download()
+        if experimental_feature == 'y':
+            upload_to_canva()
         task_executed()
     elif choice == 3:
         pinterest_upload()
