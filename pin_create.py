@@ -50,7 +50,6 @@ def image_create():
     click(find_image('images/create_pin/ideogram_generate_button.png', 0.6), duration=1)
 
 def pin_create():
-    sys.exit("\033[31munder maintenance\033[0m")
     click(find_image('images/tabs/seasoninspired_chrome.png', 0.7))
     title_prepare()
     prompt_create()
