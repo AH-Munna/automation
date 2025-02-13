@@ -5,12 +5,12 @@ from helper.pyscreensize import screenHeight
 import sys
 
 def create_new():
-    click(find_image('images/pin_upload/new_pin.png', 0.8), duration=0.5)
-    click(find_image('images/pin_upload/pic_upload.png', 0.8), duration=0.5)
+    click(find_image('images/pin_upload/new_pin.png', 0.8), duration=0.2)
+    click(find_image('images/pin_upload/pic_upload.png', 0.8), duration=0.2)
 
     # selectable_image_loc = find_image('images/pin_upload/pic_select.png', 0.8)
     selectable_image_loc = find_image('images/pin_upload/pic_select_2.png', 0.8)
-    click(selectable_image_loc.left + 120, selectable_image_loc.top + 60, duration=0.5)
+    click(selectable_image_loc.left + 120, selectable_image_loc.top + 60, duration=0.2)
     # sleep(0.3)
     hotkey('delete')
     sleep(0.3)
@@ -20,11 +20,11 @@ def create_new():
 def paste_texts(board_name, board_pos):
     def handle_clipboard(image_name, top=0):
         input_loc = find_image(image_name, 0.8)
-        click(input_loc.left + 100, input_loc.top + 50, duration=0.5)
+        click(input_loc.left + 100, input_loc.top + 50, duration=0.2)
         hotkey('ctrl', 'a')
         hotkey('win', 'v')
         clipboard_loc = find_image('images/clipboard.png', 0.8)
-        click(clipboard_loc.left+150, clipboard_loc.top+top, duration=0.5)
+        click(clipboard_loc.left+150, clipboard_loc.top+top, duration=0.2)
 
     handle_clipboard('images/pin_upload/pin-title.png', 330)
     handle_clipboard('images/pin_upload/pin-description.png', 250)
@@ -32,9 +32,9 @@ def paste_texts(board_name, board_pos):
 
     # board
     pin_board_location = find_image('images/pin_upload/pin-board.png', 0.8)
-    click(pin_board_location.left + 200, pin_board_location.top + 40, duration=0.5)
+    click(pin_board_location.left + 200, pin_board_location.top + 40, duration=0.2)
     pin_search_location = find_image('images/pin_upload/pin-search.png', 0.8)
-    click(pin_search_location.left + 200, pin_search_location.top + 40, duration=0.5)
+    click(pin_search_location.left + 200, pin_search_location.top + 40, duration=0.2)
 
     hotkey('ctrl', 'a')
     write(board_name)

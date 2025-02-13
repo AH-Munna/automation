@@ -1,8 +1,10 @@
+from groq_api import groq_title_divider, groq_prompt_gen
 from pyautogui import click, moveTo, hotkey, size, hotkey, locateOnScreen, write, position
 from time import sleep
 import sys
 from helper.find_image import find_image
 from helper.pyscreensize import screenHeight, screenWidth
+from pyperclip import copy
 
 def regen_fail_check():
     if faile_regen_loc:=find_image('images/create_pin/deepseek_failed.png', 0.6, 2):
@@ -44,14 +46,41 @@ def image_create():
     click(find_image('images/tabs/ideogram.png', 0.7), duration=1)
 
     generate_button_loc = find_image('images/create_pin/ideogram_generate_button.png', 0.6)
-    click(generate_button_loc.left - 500, generate_button_loc.top + 15, duration=1)
+    moveTo(generate_button_loc.left - 500, generate_button_loc.top + 15, duration=1)
+    click(duration=0.5)
+    sleep(0.5)
     hotkey('ctrl', 'a')
+    sleep(0.5)
     hotkey('ctrl', 'v')
+    sleep(0.5)
     click(find_image('images/create_pin/ideogram_generate_button.png', 0.6), duration=1)
 
 def pin_create():
-    click(find_image('images/tabs/seasoninspired_chrome.png', 0.7), duration=0.5)
-    click(find_image('images/tabs/deepseek.png', 0.7), duration=1)
-    title_prepare()
-    prompt_create()
-    image_create()
+    try:
+        type_of_exceution = int(input("\033[33mChoose the type of execution\n1: api\n2: web\nchoice (default: 1): \033[0m") or "1")
+        if type_of_exceution == 1:
+            title = input("\033[33mEnter the title: \033[0m")
+            copy(groq_prompt_gen(groq_title_divider(title)))
+            sleep(1)
+            print("\033[32mPrompt generated.\033[0m")
+            continue_to_image = input("\033[33mContinue to image generation? (y/n default: n): \033[0m") or "n"
+            if continue_to_image == 'n':
+                sys.exit("\033[31mstopped execution.\033[0m")
+            sleep(1)
+            print("\033[32mTrying to generate image...\033[0m")
+            sleep(1)
+            click(find_image('images/tabs/seasoninspired_chrome.png', 0.7), duration=1)
+        elif type_of_exceution == 2:
+            click(find_image('images/tabs/seasoninspired_chrome.png', 0.7), duration=0.5)
+            click(find_image('images/tabs/deepseek.png', 0.7), duration=1)
+            title_prepare()
+            prompt_create()
+        else:
+            print("\033[31mPlease choose between 1 and 2\033[0m")
+            return pin_create()
+        
+        image_create()
+    except ValueError:
+        print("\033[31mPlease choose between 1 and 2\033[0m")
+        return pin_create()
+        
