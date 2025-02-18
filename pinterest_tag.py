@@ -13,15 +13,15 @@ def select_next_pin():
     moveTo(150, 500)
     click()
     
-def copy_tag (tag_num):
-    click(find_image('images/tabs/notepad.png', 0.9))
+def copy_tag (tag_num, notepad_loc):
+    click(notepad_loc)
 
     moveTo(18, 85 + (tag_num * 36))
     click(clicks=3)
     hotkey('ctrl', 'c')
 
-def paste_tag ():
-    click(find_image('images/tabs/pinterest_chrome.png', 0.8))
+def paste_tag (browswer_loc):
+    click(browswer_loc)
 
     tagbox_loc = find_image('images/tagbox-warning.png', 0.6)
     click(tagbox_loc.left + 100, tagbox_loc.top - 35)
@@ -46,12 +46,14 @@ def publish_post (post_num=1):
 def pinterest_tag():
     try:
         post_amount = int(input("Number of posts to tag: "))
+        browswer_loc = find_image('images/tabs/pinterest_chrome.png', 0.8)
+        notepad_loc = find_image('images/tabs/notepad.png', 0.9)
         for pin_num in range(post_amount):
             sleep(2)
             for i in range(9):
                 sleep(0.2)
-                copy_tag(i)
-                paste_tag()
+                copy_tag(i, notepad_loc)
+                paste_tag(browswer_loc)
             publish_post(pin_num+1)
     except ValueError:
         sys.exit("Please enter a number")

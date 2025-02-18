@@ -63,9 +63,6 @@ def pin_create():
             copy(groq_prompt_gen(groq_title_divider(title)))
             sleep(1)
             print("\033[32mPrompt generated.\033[0m")
-            continue_to_image = input("\033[33mContinue to image generation? (y/n default: n): \033[0m") or "n"
-            if continue_to_image == 'n':
-                sys.exit("\033[31mstopped execution.\033[0m")
             sleep(1)
             print("\033[32mTrying to generate image...\033[0m")
             sleep(1)

@@ -2,13 +2,13 @@ from pyautogui import locateOnScreen
 from time import sleep
 import sys
 
-def find_image(image, confidence=0.9, tries=8)-> dict[str, int]:
+def find_image(image, confidence=0.9, tries=8, no_exit=False)-> dict[str, int]:
     def try_to_find_image():
         try:
             image_loc = locateOnScreen(image, confidence=confidence)
             return image_loc
         except:
-            if k == tries:
+            if k == tries and not no_exit:
                 sys.exit("\033[31mImage not found\033[0m")
     
     k = 0
