@@ -27,7 +27,7 @@ def sort_forbidden(first_str: list[str], second_str: list[str]) -> list[str]:
         else:
             not_moved.append(item_first)
 
-    return not_moved + ["\n"] + moved_to_end
+    return not_moved + [""] + moved_to_end
 
 def remove_repetitions():
     keywords = ""
