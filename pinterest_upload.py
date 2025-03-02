@@ -48,7 +48,7 @@ def paste_texts(board_name, board_pos):
 def pinterest_upload():
     num_of_image = int(input("Number of images: "))
     board_name = input("Board name: ")
-    board_pos = int(input("Board position: "))
+    board_pos = int(input("Board position (default 1): ") or '1')
 
     click(find_image('images/tabs/pinterest_chrome.png', 0.8))
 

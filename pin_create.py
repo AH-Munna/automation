@@ -43,21 +43,21 @@ def prompt_create():
     deepseek_paste_and_copy()
 
 def image_create():
-    click(find_image('images/tabs/ideogram.png', 0.7), duration=1)
+    click(find_image('images/tabs/ideogram.png', 0.7), duration=0.5)
 
     generate_button_loc = find_image('images/create_pin/ideogram_generate_button.png', 0.6)
-    moveTo(generate_button_loc.left - 500, generate_button_loc.top + 15, duration=1)
+    moveTo(generate_button_loc.left - 500, generate_button_loc.top + 15, duration=0.5)
     click(duration=0.5)
     sleep(0.5)
     hotkey('ctrl', 'a')
     sleep(0.5)
     hotkey('ctrl', 'v')
-    sleep(0.5)
-    click(find_image('images/create_pin/ideogram_generate_button.png', 0.6), duration=1)
+    sleep(1)
+    click(find_image('images/create_pin/ideogram_generate_button.png', 0.6), duration=2)
 
 def pin_create():
     try:
-        type_of_exceution = int(input("\033[33mChoose the type of execution\n1: api\n2: web\nchoice (default: 1): \033[0m") or "1")
+        type_of_exceution = int(input("\033[1;33mSelect service: \033[1;32m1\033[1;33m] API |\033[1;32m 2\033[1;33m] Web (default: 1): \033[0m") or "1")
         if type_of_exceution == 1:
             title = input("\033[33mEnter the title: \033[0m")
             copy(groq_prompt_gen(groq_title_divider(title)))
@@ -67,7 +67,7 @@ def pin_create():
             print("\033[32mTrying to generate image...\033[0m")
             sleep(1)
             click(find_image('images/tabs/seasoninspired_chrome.png', 0.7), duration=1)
-        elif type_of_exceution == 2:
+        elif type_of_exceution == 2: # not managed
             click(find_image('images/tabs/seasoninspired_chrome.png', 0.7), duration=0.5)
             click(find_image('images/tabs/deepseek.png', 0.7), duration=1)
             title_prepare()
