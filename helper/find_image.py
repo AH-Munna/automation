@@ -2,7 +2,10 @@ from pyautogui import locateOnScreen
 from time import sleep
 import sys
 
-def find_image(image, confidence=0.9, tries=8, no_exit=False)-> dict[str, int]:
+def find_image(image:str, confidence=0.9, tries=8, no_exit=False, long=False)-> dict[str, int]:
+    """
+    looks for image on screen
+    """
     def try_to_find_image():
         try:
             image_loc = locateOnScreen(image, confidence=confidence)
@@ -17,10 +20,11 @@ def find_image(image, confidence=0.9, tries=8, no_exit=False)-> dict[str, int]:
                     sys.exit("\033[31mImage not found. exiting...\033[0m")
     
     k = 0
-    print(f'trying to find image', end=': ')
+    print(f'trying to find ', image, "sleeping for", end=': ')
     while(k < tries):
-        print(k, end=', ')
-        sleep(k * 0.5)
+        sleep_time = (k * 0.5) if not long else (int((tries - k)/3))
+        print(sleep_time, end=', ', flush=True)
+        sleep(sleep_time)
         k = k + 1
 
         if image_loc:=try_to_find_image():

@@ -49,7 +49,7 @@ def remove_repetitions():
             seen.add(item)
             unique_items.append(item)
     
-    unique_items = sort_forbidden(unique_items, ["pinterest", "facebook", "image", "download", "gif", "reddit", "netflix"])
+    unique_items = sort_forbidden(unique_items, ["pinterest", "facebook", "image", "download", "gif", "reddit", "netflix", 'printable', 'free'])
 
     print("\033[32mUnique items:\033[0m")
     for item in unique_items:

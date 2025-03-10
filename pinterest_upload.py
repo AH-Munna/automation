@@ -3,6 +3,8 @@ from time import sleep
 from helper.find_image import find_image
 from helper.pyscreensize import screenHeight
 import sys
+from helper.play_audio import play_audio
+from threading import Thread
 
 def create_new():
     click(find_image('images/pin_upload/new_pin.png', 0.8), duration=0.2)
@@ -49,6 +51,7 @@ def pinterest_upload():
     num_of_image = int(input("Number of images: "))
     board_name = input("Board name: ")
     board_pos = int(input("Board position (default 1): ") or '1')
+    Thread(target=play_audio, args=('audio/pinterest_upload_start_en.wav',), daemon=True).start()
 
     click(find_image('images/tabs/pinterest_chrome.png', 0.8))
 

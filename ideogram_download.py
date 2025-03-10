@@ -25,11 +25,11 @@ def download_image(image_number, download_button_const):
     
     moveTo(download_button_loc, duration=0.3)
 
-    if find_image('images/ideogram/download_button.png', 0.95, 2, True) == None:
+    if find_image('images/ideogram/download_button.png', 0.8, 2, True) == None:
         change_image(image_number, download_button_const)
         return download_image(image_number, download_button_const)
     
-    if find_image(f'images/ideogram/{image_number}.png', 0.9, 2, True) == None:
+    if find_image(f'images/ideogram/{image_number}.png', 0.8, 2, True) == None:
         change_image(image_number, download_button_const)
         return download_image(image_number, download_button_const)
     click()
@@ -47,9 +47,8 @@ def download_image(image_number, download_button_const):
 def ideogram_download(direct=False):
     if not direct:
         click(find_image('images/tabs/seasoninspired_chrome.png', 0.8))
-    sleep(1)
     if direct:
-        ideogram_creation_loc = find_image('images/ideogram/creation_completed.png', 0.9, 50)
+        ideogram_creation_loc = find_image(image='images/ideogram/creation_completed.png', confidence=0.9, tries=30, long=True)
         moveTo(ideogram_creation_loc, duration=1)
         click()
         click(ideogram_creation_loc.left + 400, ideogram_creation_loc.top + 100, duration=1.5)

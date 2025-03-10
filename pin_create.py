@@ -58,15 +58,20 @@ def image_create():
 def pin_create():
     try:
         type_of_exceution = int(input("\033[1;33mSelect service: \033[1;32m1\033[1;33m] API |\033[1;32m 2\033[1;33m] Web (default: 1): \033[0m") or "1")
+        thinking_model = input("\033[1;33mThinking model? y/n (default y): \033[0m") or "y"
+        browser_tab = input("\033[1;33mBrowser tab? red/season (default season): \033[0m") or "season"
         if type_of_exceution == 1:
             title = input("\033[33mEnter the title: \033[0m")
-            copy(groq_prompt_gen(groq_title_divider(title)))
+            copy(groq_prompt_gen(groq_title_divider(title, thinking_model == "y"), thinking_model == "y"))
             sleep(1)
             print("\033[32mPrompt generated.\033[0m")
             sleep(1)
             print("\033[32mTrying to generate image...\033[0m")
             sleep(1)
-            click(find_image('images/tabs/seasoninspired_chrome.png', 0.7), duration=1)
+            if browser_tab == "season":
+                click(find_image('images/tabs/seasoninspired_chrome.png', 0.7), duration=1)
+            else:
+                click(find_image('images/tabs/red_chrome.png', 0.7), duration=1)
         elif type_of_exceution == 2: # not managed
             click(find_image('images/tabs/seasoninspired_chrome.png', 0.7), duration=0.5)
             click(find_image('images/tabs/deepseek.png', 0.7), duration=1)
