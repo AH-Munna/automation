@@ -55,40 +55,31 @@ def image_create():
     sleep(1)
     click(find_image('images/create_pin/ideogram_generate_button.png', 0.6), duration=2)
 
-def pin_create():
+def pin_create_app(type_of_execution=1, thinking_model='y', browser_tab='season', title=None):
     try:
-        type_of_exceution = int(input("\033[1;33mSelect service: \033[1;32m1\033[1;33m] API |\033[1;32m 2\033[1;33m] Web (default: 1): \033[0m") or "1")
-        thinking_model = input("\033[1;33mThinking model? y/n (default y): \033[0m") or "y"
-        browser_tab = input("\033[1;33mBrowser tab? red/season (default season): \033[0m") or "season"
-        if type_of_exceution == 1:
-            title = input("\033[33mEnter the title (default: copied from clipboard): \033[0m")
+        if type_of_execution == 1:
             if not title:
                 title = paste()
-
-            copy(groq_prompt_gen(groq_title_divider(title, thinking_model == "y"), thinking_model == "y"))
+            copy(groq_prompt_gen(groq_title_divider(title, thinking_model == 'y'), thinking_model == 'y'))
             sleep(1)
             print("\033[32mPrompt generated.\033[0m")
             play_audio('audio/generate_image_en.wav')
             sleep(1)
             print("\033[32mTrying to generate image...\033[0m")
             sleep(1)
-
-            if browser_tab == "season":
+            if browser_tab == 'season':
                 click(find_image('images/tabs/seasoninspired_chrome.png', 0.8), duration=1)
             else:
                 click(find_image('images/tabs/red_chrome.png', 0.8), duration=1)
-
-        elif type_of_exceution == 2: # not managed
+        elif type_of_execution == 2:  # Not managed, keeping original logic
             click(find_image('images/tabs/seasoninspired_chrome.png', 0.7), duration=0.5)
             click(find_image('images/tabs/deepseek.png', 0.7), duration=1)
             title_prepare()
             prompt_create()
         else:
             print("\033[31mPlease choose between 1 and 2\033[0m")
-            return pin_create()
+            return  # In GUI, this won't recurse since input is controlled
         
         image_create()
     except ValueError:
-        print("\033[31mPlease choose between 1 and 2\033[0m")
-        return pin_create()
-        
+        print("\033[31mInvalid input\033[0m")

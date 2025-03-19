@@ -52,7 +52,7 @@ def publish_post (post_num=1):
     select_next_pin()
 
 # code starto
-def pinterest_tag():
+def pinterest_tag_app():
     play_audio('audio/tag_pin_options_en.wav')
     try:
         post_amount = int(input("Number of posts to tag: "))

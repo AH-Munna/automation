@@ -1,7 +1,9 @@
 from pyautogui import click, moveTo
 from helper.find_image import find_image
+from helper.play_audio import play_audio
 from time import sleep
 import sys
+from threading import Thread
 
 
 def change_image(image_number, download_button_const):
@@ -46,9 +48,10 @@ def download_image(image_number, download_button_const):
 # code starto
 def ideogram_download(direct=False):
     if not direct:
+        Thread(target=play_audio, args=('audio/ideogram_download_en.wav',), daemon=True).start()
         click(find_image('images/tabs/seasoninspired_chrome.png', 0.8))
     if direct:
-        ideogram_creation_loc = find_image(image='images/ideogram/creation_completed.png', confidence=0.9, tries=30, long=True)
+        ideogram_creation_loc = find_image(image='images/ideogram/creation_completed.png', confidence=0.9, tries=40, long=True)
         moveTo(ideogram_creation_loc, duration=1)
         click()
         click(ideogram_creation_loc.left + 400, ideogram_creation_loc.top + 100, duration=1.5)

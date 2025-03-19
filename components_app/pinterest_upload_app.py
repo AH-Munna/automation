@@ -1,10 +1,7 @@
-from pyautogui import click, moveTo, hotkey, size, hotkey, write, position, doubleClick
+from pyautogui import click, moveTo, hotkey, hotkey, write, position, doubleClick
 from time import sleep
 from helper.find_image import find_image
-from helper.pyscreensize import screenHeight
-import sys
 from helper.play_audio import play_audio
-from threading import Thread
 
 def create_new():
     click(find_image('images/pin_upload/new_pin.png', 0.8), duration=0.2)
@@ -47,18 +44,20 @@ def paste_texts(board_name, board_pos):
     click()
 
 # code starto
-def pinterest_upload():
-    play_audio('audio/pinterest_upload_en.wav')
-    num_of_image = int(input("Number of images: "))
-    board_name = input("Board name: ")
-    board_pos = int(input("Board position (default 1): ") or '1')
-    # Thread(target=play_audio, args=('audio/pinterest_upload_start_en.wav',), daemon=True).start()
+def pinterest_upload_app(num_of_image, board_name, board_pos=1):
+    """
+    Uploads a specified number of images to a Pinterest board.
 
+    Parameters:
+    - num_of_image (int): Number of images to upload.
+    - board_name (str): Name of the Pinterest board.
+    - board_pos (int, optional): Position of the board (default is 1).
+    """
+    # play_audio('audio/pinterest_upload_en.wav')
     click(find_image('images/tabs/pinterest_chrome.png', 0.8))
-
     for i in range(num_of_image):
         create_new()
         sleep(0.5)
         paste_texts(board_name, board_pos)
-        print("Image", i+1, "uploaded")
+        print(f"Image {i+1} uploaded")
         sleep(1)

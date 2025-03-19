@@ -4,7 +4,7 @@ from pin_create import pin_create
 from pinterest_upload import pinterest_upload
 from upload_to_canva import upload_to_canva
 from doc_space_editor import doc_space_editor
-from helper.repeatation_remover import remove_repetitions
+from repeatation_remover import remove_repetitions
 from helper.play_audio import play_audio
 import sys
 
@@ -19,7 +19,6 @@ def main_func():
     elif choice == 2:
         handle_choice_2()
     elif choice == 3:
-        play_audio('audio/pinterest_upload_en.wav')
         pinterest_upload()
         task_executed()
     elif choice == 4:
@@ -36,6 +35,7 @@ def main_func():
         return main_func()
 
 def handle_choice_1():
+    play_audio('audio/create_image_start_en.wav')
     download_image = input("\033[33mdownload image y/n (default y): \033[0m") or 'y'
     confirm_upload_to_canva = input("\033[33mupload to canva? y/n (default y): \033[0m") or 'y'
     downloaded_image_pos = 0
