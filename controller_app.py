@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, simpledialog
 from ideogram_download import ideogram_download
 from components_app.pin_create_app import pin_create_app
 from components_app.pinterest_upload_app import pinterest_upload_app
@@ -213,7 +213,7 @@ def execute_task():
         task_executed()
 
     elif choice == 4:
-        pinterest_tag_app()
+        execute_choice_four()
         task_executed()
 
     elif choice == 5:
@@ -222,9 +222,22 @@ def execute_task():
     elif choice == 6:
         doc_space_editor()
 
+def execute_choice_four():
+    play_audio('audio/tag_pin_options_en.wav')
+    try:
+        post_amount_str = simpledialog.askstring("Input", "Number of posts to tag:")
+        if post_amount_str is None:
+            return
+        post_amount = int(post_amount_str)
+        if post_amount <= 0:
+            raise ValueError("Number of posts must be positive")
+        pinterest_tag_app(post_amount)
+    except ValueError:
+        messagebox.showerror("Error", "Please enter a valid positive integer")
+
 def task_executed():
     """Play completion audio, matching original script behavior."""
-    play_audio('audio/task_completed.wav', wait=True)
+    play_audio('audio/task_completed_en.wav', wait=True)
     sys.exit()
 
 # Set up the GUI
@@ -266,5 +279,8 @@ if __name__ == "__main__":
 
     # Initialize input frame for default choice
     update_input_frame()
+
+    # tk.Radiobutton(root, text="4) Tag pins and publish them", variable=choice_var, value=4).pack(anchor="w")
+    # tk.Button(root, text="Execute", command=execute_task).pack()
 
     root.mainloop()

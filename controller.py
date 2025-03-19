@@ -59,7 +59,7 @@ def handle_choice_2():
     task_executed()
 
 def task_executed():
-    play_audio('audio/task_completed.wav', wait=True)
+    play_audio('audio/task_completed_jp.wav')
     sys.exit("\033[32mtask executed!\033[0m")
 
 def get_choices():

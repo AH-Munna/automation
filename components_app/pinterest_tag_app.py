@@ -2,6 +2,8 @@ from pyautogui import click, moveTo, hotkey
 from helper.pyscreensize import screenHeight, screenWidth
 from time import sleep
 import sys
+import threading
+from tkinter import messagebox
 # from pandas import read_clipboard, read_csv
 # from pyperclip import paste
 from helper.find_image import find_image
@@ -52,19 +54,23 @@ def publish_post (post_num=1):
     select_next_pin()
 
 # code starto
-def pinterest_tag_app():
-    play_audio('audio/tag_pin_options_en.wav')
-    try:
-        post_amount = int(input("Number of posts to tag: "))
-        play_audio('audio/tag_pin_start_en.wav')
-        browswer_loc = find_image('images/tabs/pinterest_chrome.png', 0.8)
-        notepad_loc = find_image('images/tabs/notepad.png', 0.9)
-        for pin_num in range(post_amount):
-            sleep(2)
-            for i in range(9):
-                sleep(0.2)
-                copy_tag(i, notepad_loc)
-                paste_tag(browswer_loc)
-            publish_post(pin_num+1)
-    except ValueError:
-        sys.exit("Please enter a number")
+def pinterest_tag_app(post_amount):
+    def run_tagging():
+        try:
+            # play_audio('audio/tag_pin_start_jp_01.wav')
+            # play_audio('audio/tag_pin_start_jp_02.wav')
+            play_audio('audio/tag_pin_start_en.wav')
+            browser_loc = find_image('images/tabs/pinterest_chrome.png', 0.8)
+            notepad_loc = find_image('images/tabs/notepad.png', 0.9)
+            for pin_num in range(post_amount):
+                sleep(2)
+                for i in range(9):
+                    sleep(0.2)
+                    copy_tag(i, notepad_loc)
+                    paste_tag(browser_loc)
+                publish_post(pin_num + 1)
+        except Exception as e:
+            messagebox.showerror("Error", f"An error occurred: {str(e)}")
+
+    run_tagging()
+    # threading.Thread(target=run_tagging, daemon=True).start()
