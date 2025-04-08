@@ -64,7 +64,7 @@ def task_executed():
 
 def get_choices():
     play_audio('audio/welcome_en.wav')
-    print("\033[32mWelcome to the automation controller. What would you like to do?\033[96m \n1) Create a pin from deepseek to ideogram \n2) Download ideogram generated images \n3) Upload pin images \n4) Tag pins and publish them \n5) remove keywords repetitions \n6) edit doc space \n7) Exit\033[0m\n\n")
+    print("\033[32mWelcome to the automation controller. What would you like to do?\033[96m \033[31m(not managed)\033[0m\n1) Create a pin from deepseek to ideogram \n2) Download ideogram generated images \n3) Upload pin images \n4) Tag pins and publish them \n5) remove keywords repetitions \n6) edit doc space \n7) Exit\033[0m\n\n")
     try:
         return int(input("\033[32mChoice (default: 6): \033[0m") or '6')
     except ValueError:

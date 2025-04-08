@@ -57,9 +57,8 @@ def publish_post (post_num=1):
 def pinterest_tag_app(post_amount):
     def run_tagging():
         try:
-            # play_audio('audio/tag_pin_start_jp_01.wav')
-            # play_audio('audio/tag_pin_start_jp_02.wav')
-            play_audio('audio/tag_pin_start_en.wav')
+            play_audio('audio/tag_pin_start_jp_01.wav')
+            play_audio('audio/tag_pin_start_jp_02.wav')
             browser_loc = find_image('images/tabs/pinterest_chrome.png', 0.8)
             notepad_loc = find_image('images/tabs/notepad.png', 0.9)
             for pin_num in range(post_amount):

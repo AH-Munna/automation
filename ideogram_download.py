@@ -12,7 +12,7 @@ def change_image(image_number, download_button_const):
         click(download_button_const.left + 120, download_button_const.top, duration= 0.3)
         return change_image(image_number, download_button_const)
 
-    moveTo(download_button.left - 160 + (image_number * 75), download_button.top + 220, duration=0.2)
+    moveTo(download_button.left - 160 + (image_number * 75), download_button.top + 270, duration=0.2)
     download_button = find_image('images/ideogram/download_button.png', 0.95, 2, True)
     if download_button == None:
         click(download_button_const.left + 120, download_button_const.top, duration= 0.3)
@@ -35,15 +35,6 @@ def download_image(image_number, download_button_const):
         change_image(image_number, download_button_const)
         return download_image(image_number, download_button_const)
     click()
-
-    # old ideogram
-    # download_button = find_image('images/ideogram/download_button.png', 0.8)
-    # moveTo(download_button.left - 35, download_button.top + 25, duration=0.3)
-    # download_menu_loc = find_image('images/ideogram/download-option.png', 0.8, 2, no_exit=True)
-    # if download_menu_loc == None:
-    #     return download_image()
-    # moveTo(download_menu_loc.left + 60, download_menu_loc.top + 25, duration=0.2)
-    # click()
 
 # code starto
 def ideogram_download(direct=False):

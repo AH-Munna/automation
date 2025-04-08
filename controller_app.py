@@ -4,24 +4,21 @@ from ideogram_download import ideogram_download
 from components_app.pin_create_app import pin_create_app
 from components_app.pinterest_upload_app import pinterest_upload_app
 from components_app.pinterest_tag_app import pinterest_tag_app
+from components_app.doc_space_editor_app import doc_space_editor_app
 from upload_to_canva import upload_to_canva
-from doc_space_editor import doc_space_editor
-from repeatation_remover import remove_repetitions
+from components_app.remove_repetition_app import remove_repetitions_app
 from helper.play_audio import play_audio
 import sys
 
-# Dictionary to store input variables for each choice
 input_vars = {}
 
 def update_input_frame(*args):
     """Update the input frame based on the selected choice."""
     choice = choice_var.get()
-    # Clear existing widgets in input_frame
     for widget in input_frame.winfo_children():
         widget.destroy()
 
     if choice == 1:
-        # Define variables for pin_create inputs
         type_of_execution_var = tk.IntVar(value=1)
         thinking_model_var = tk.StringVar(value='y')
         browser_tab_var = tk.StringVar(value='season')
@@ -144,8 +141,48 @@ def update_input_frame(*args):
         
         tk.Label(input_frame, text="Board Position:").pack(anchor='w')
         tk.Entry(input_frame, textvariable=board_pos_var).pack(anchor='w')
+    elif choice == 5:
+        # Label to instruct the user
+        label = tk.Label(input_frame, text="Enter keywords (separated by commas or newlines):")
+        label.pack(pady=5)
+        
+        # Text widget for multi-line input
+        text_widget = tk.Text(input_frame)
+        text_widget.pack(expand=True, fill='both', pady=5, padx=5)
+        
+        # Button to process the input
+        process_button = tk.Button(
+        input_frame,
+        text="Process Keywords",
+        fg="white",
+        bg="green",
+        font=("Helvetica", 16, "bold"),
+        relief="raised",
+        bd=4,
+        padx=10, 
+        pady=5,
+        activebackground="yellow",
+        activeforeground="black",
+        command=lambda: process_keywords(text_widget.get("1.0", tk.END))
+    )
+        process_button.pack(pady=5)
+    elif choice == 6:
+        num_of_process_var = tk.StringVar(value='5')
+        input_vars[choice] = {'num_of_process': num_of_process_var}
+
+        tk.Label(input_frame, text="Number of lines to process (default 5):").pack(anchor='w')
+        tk.Entry(input_frame, textvariable=num_of_process_var).pack(anchor='w')
     else:
         input_vars[choice] = {}  # No additional inputs for other choices
+
+def process_keywords(keywords_text):
+    """Processes the keywords and displays the unique list."""
+    unique_keywords = remove_repetitions_app(keywords_text)
+    # Display the result in a message box
+    if unique_keywords:
+        messagebox.showinfo("Unique Keywords", "\n".join(unique_keywords))
+    else:
+        messagebox.showinfo("Unique Keywords (already copied)", "No keywords entered.")
 
 def execute_task():
     """Execute the selected task based on user inputs."""
@@ -217,10 +254,13 @@ def execute_task():
         task_executed()
 
     elif choice == 5:
-        remove_repetitions()
+        remove_repetitions_app()
 
     elif choice == 6:
-        doc_space_editor()
+        vars = input_vars.get(choice, {})
+        num_of_line = int(vars.get('num_of_process', tk.StringVar(value=5)).get())
+        doc_space_editor_app(num_of_line)
+        task_executed()
 
 def execute_choice_four():
     play_audio('audio/tag_pin_options_en.wav')
@@ -236,7 +276,7 @@ def execute_choice_four():
         messagebox.showerror("Error", "Please enter a valid positive integer")
 
 def task_executed():
-    """Play completion audio, matching original script behavior."""
+    """Play completion audio."""
     play_audio('audio/task_completed_en.wav', wait=True)
     sys.exit()
 
@@ -245,12 +285,30 @@ if __name__ == "__main__":
     # Play welcome audio at startup
     play_audio('audio/welcome_en.wav')
 
+    # design
     root = tk.Tk()
     root.title("Automation Controller")
+    root.geometry("1366x768")
+    root.attributes('-alpha', 0.9)
+    root.configure(borderwidth=10)
+
+    left_frame = tk.Frame(root)
+    right_frame = tk.Frame(root)
+
+    # Place the frames in a grid (left frame in column 0, right frame in column 1)
+    left_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
+    right_frame.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
+
+    # Make the grid expand when the window is resized
+    root.grid_columnconfigure(0, weight=1)
+    root.grid_columnconfigure(1, weight=5)
+    root.grid_rowconfigure(0, weight=1)
+
+    # --- Left Frame: Main Choices ---
 
     # Welcome message
-    welcome_label = tk.Label(root, text="Welcome to the automation controller. What would you like to do?")
-    welcome_label.pack(pady=10)
+    welcome_label = tk.Label(left_frame, text="Welcome to the automation controller. What would you like to do?")
+    welcome_label.pack(pady=10, anchor='w')
 
     # Choice selection with radio buttons
     choice_var = tk.IntVar(value=6)  # Default to 6
@@ -264,23 +322,33 @@ if __name__ == "__main__":
         ("7) Exit", 7)
     ]
     for text, value in choices:
-        tk.Radiobutton(root, text=text, variable=choice_var, value=value).pack(anchor='w', padx=10)
+        tk.Radiobutton(left_frame, text=text, variable=choice_var, value=value).pack(anchor='w', padx=10)
 
-    # Frame for dynamic input fields
-    input_frame = tk.Frame(root)
-    input_frame.pack(pady=10)
+    # --- Right Frame: Dynamic Input Fields ---
+    input_frame = tk.Frame(right_frame, relief=tk.GROOVE, borderwidth=2)
+    input_frame.pack(fill='both', expand=True, padx=10, pady=10)
 
     # Bind choice selection to update input fields
     choice_var.trace('w', update_input_frame)
 
-    # Execute button
-    execute_button = tk.Button(root, text="Execute", command=execute_task)
-    execute_button.pack(pady=10)
-
     # Initialize input frame for default choice
     update_input_frame()
 
-    # tk.Radiobutton(root, text="4) Tag pins and publish them", variable=choice_var, value=4).pack(anchor="w")
-    # tk.Button(root, text="Execute", command=execute_task).pack()
+    # Execute button at the bottom (spanning both frames)
+    execute_button = tk.Button(
+        root,
+        text="Execute Task",
+        fg="white",          # Text color
+        bg="blue",           # Background color
+        font=("Helvetica", 16, "bold"),  # Font style and size
+        relief="raised",     # Border style
+        bd=4,                # Border width
+        padx=10,             # Horizontal padding
+        pady=5,              # Vertical padding
+        activebackground="darkblue",  # Background when button is pressed
+        activeforeground="yellow"       # Text color when button is pressed
+        , command=execute_task
+    )
+    execute_button.grid(row=1, column=0, columnspan=2, pady=10)
 
     root.mainloop()
