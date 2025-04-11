@@ -1,4 +1,4 @@
-from groq_api import groq_title_divider, groq_prompt_gen
+from helper.groq_api import groq_title_divider, groq_prompt_gen
 from pyautogui import click, moveTo, hotkey, hotkey, position
 from time import sleep
 import sys

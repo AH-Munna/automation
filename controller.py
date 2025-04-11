@@ -1,10 +1,12 @@
-from ideogram_download import ideogram_download
-from pinterest_tag import pinterest_tag
-from pin_create import pin_create
-from pinterest_upload import pinterest_upload
-from upload_to_canva import upload_to_canva
-from doc_space_editor import doc_space_editor
-from repeatation_remover import remove_repetitions
+# NOT MANAGED. will not be updated in the future.
+
+from components.ideogram_download import ideogram_download
+from components.pinterest_tag import pinterest_tag
+from components.pin_create import pin_create
+from components.pinterest_upload import pinterest_upload
+from components.upload_to_canva import upload_to_canva
+from components.doc_space_editor import doc_space_editor
+from components.repeatation_remover import remove_repetitions
 from helper.play_audio import play_audio
 import sys
 
