@@ -151,11 +151,13 @@ class AutomationControllerApp:
         
         # Choice 5: Remove keywords repetitions
         self.input_vars[5] = {
-            'keywords_text': tk.StringVar()
+            'keywords_text': tk.StringVar(),
+            'filter_str': tk.StringVar()
         }
         
         # Choice 6: Edit doc space
         self.input_vars[6] = {
+            "browser_tab": tk.StringVar(value='season'),
             'num_of_process': tk.StringVar(value='5')
         }
 
@@ -445,6 +447,12 @@ class AutomationControllerApp:
         """Create input fields for choice 5 - Remove keywords repetitions"""
         # Label to instruct the user
         ttk.Label(self.input_frame, text="Enter keywords (separated by commas or newlines):").pack(pady=10, anchor='w')
+
+        # filter_str input field
+        title_var = ttk.Frame(self.input_frame)
+        title_var.pack(fill='x', padx=20, pady=5, anchor='w')
+        ttk.Label(title_var, text="Title:").pack(side='left', padx=(0, 10))
+        ttk.Entry(title_var, textvariable=self.input_vars[5]['filter_str'], width=40).pack(side='left', fill='x', expand=True)
         
         # Text widget with scrollbar for multi-line input
         text_frame = ttk.Frame(self.input_frame)
@@ -461,7 +469,7 @@ class AutomationControllerApp:
         process_button = ttk.Button(
             self.input_frame,
             text="Process Keywords",
-            command=lambda: self.process_keywords(self.keywords_text.get("1.0", tk.END))
+            command=lambda: self.process_keywords(self.keywords_text.get("1.0", tk.END), self.input_vars[5]['filter_str'].get()),
         )
         process_button.pack(pady=10)
     
@@ -472,6 +480,15 @@ class AutomationControllerApp:
         # Process settings frame
         process_frame = ttk.LabelFrame(self.input_frame, text="Process Settings")
         process_frame.pack(fill='x', padx=10, pady=10, anchor='w')
+
+        # Browser tab selector
+        browser_frame = ttk.Frame(process_frame)
+        browser_frame.pack(fill='x', padx=20, pady=5, anchor='w')
+        
+        ttk.Label(browser_frame, text="Browser tab:").pack(side='left', padx=(0, 10))
+        ttk.Radiobutton(browser_frame, text="Season", variable=vars['browser_tab'], value='season').pack(side='left', padx=10)
+        ttk.Radiobutton(browser_frame, text="Red", variable=vars['browser_tab'], value='red').pack(side='left', padx=10)
+        ttk.Radiobutton(browser_frame, text="voyager", variable=vars['browser_tab'], value='voyager').pack(side='left', padx=10)
         
         # Number of lines
         lines_frame = ttk.Frame(process_frame)
@@ -529,13 +546,11 @@ class AutomationControllerApp:
         ttk.Label(image_start_pos_var, text="number of items before images:").pack(side='left', padx=(0, 10))
         ttk.Entry(image_start_pos_var, textvariable=vars['image_start_pos'], width=40).pack(side='left', fill='x')
 
-
-
-    def process_keywords(self, keywords_text):
+    def process_keywords(self, keywords_text, filter_str:str):
         """Process keywords and display unique results"""
         self.status_var.set("Processing keywords...")
         try:
-            unique_keywords = remove_repetitions_app(keywords_text)
+            unique_keywords = remove_repetitions_app(keywords_text, filter_str)
             if unique_keywords:
                 messagebox.showinfo("Unique Keywords", "\n".join(unique_keywords))
             else:
@@ -642,20 +657,21 @@ class AutomationControllerApp:
         number_of_pins = vars['number_of_pins'].get()
         
         try:
-            # Call your WordPress paste function here
             self.status_var.set("tagging pins...")
             pinterest_tag_app(post_amount=int(number_of_pins))
             
             self.task_executed()
         except Exception as e:
-            self.show_error_and_update_status(f"Error pasting to WordPress: {str(e)}")
+            self.show_error_and_update_status(f"Error pasting to pinterest: {str(e)}")
     
     def execute_choice_5(self):
         """Execute choice 5 - Remove keywords repetitions"""
+        keywords_text = self.input_vars[5]['keywords_text'].get("1.0", tk.END)
+        filter_str = self.input_vars[5]['filter_str'].get()
         if hasattr(self, 'keywords_text'):
-            self.process_keywords(self.keywords_text.get("1.0", tk.END))
+            self.process_keywords(keywords_text, filter_str)
         else:
-            remove_repetitions_app()
+            remove_repetitions_app(keywords_text=keywords_text, filter_str=filter_str)
     
     def execute_choice_6(self):
         """Execute choice 6 - Edit doc space"""
@@ -663,7 +679,9 @@ class AutomationControllerApp:
         
         try:
             num_of_line = int(vars['num_of_process'].get())
-            doc_space_editor_app(num_of_line)
+            browser_tab = vars['browser_tab'].get()
+            self.status_var.set("editing doc space...")
+            doc_space_editor_app(num_of_line, browser_tab)
             self.task_executed()
         except ValueError:
             self.show_error_and_update_status("Number of lines must be an integer")

@@ -7,7 +7,7 @@ from helper.pyscreensize import screenHeight
 from threading import Thread
 
 def upload_to_canva (number_of_image=4, downloaded_image_pos=0):
-    Thread(target=play_audio, args=('audio/upload_to_canva_en.wav',), daemon=True).start()
+    # Thread(target=play_audio, args=('audio/upload_to_canva_en.wav',), daemon=True).start()
 
     # setup tabs
     if number_of_image != 4:
@@ -19,11 +19,12 @@ def upload_to_canva (number_of_image=4, downloaded_image_pos=0):
 
     # move to files
     todays_downloads = find_image('images/pin_upload/pic_select_2.png', 0.7)
-    moveTo((todays_downloads.left + 35) + (downloaded_image_pos * 108), todays_downloads.top + 50, duration=0.3)
+    moveTo((todays_downloads.left + 52) + (downloaded_image_pos * 112), todays_downloads.top + 50, duration=0.3)
 
     # select files and paste to canva
     x, y = position()
-    dragTo(x+ (number_of_image * 105), y + 30, duration=1)
+    dragTo(x+ (number_of_image * 110), y + 30, duration=2)
+    sys.exit()
 
     canva_controls = find_image('images/canva/canva_control.png', 0.9)
     dragTo(canva_controls.left + 100, canva_controls.top + 100, duration=1.5)
@@ -52,7 +53,7 @@ def upload_to_canva (number_of_image=4, downloaded_image_pos=0):
                 hotkey('delete')
         if i != number_of_image-1:
             moveTo(canva_controls.left + 200, canva_controls.top + 450, duration=0.2)
-            scroll(screenHeight-80)
+            scroll(screenHeight-40)
 
     # delete uploaded images
     click(download_files, duration=0.2)

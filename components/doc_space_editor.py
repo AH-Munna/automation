@@ -6,11 +6,11 @@ from helper.find_image import find_image
 from helper.pyscreensize import screenHeight, screenWidth
 from pyperclip import copy
 
-def doc_space_editor():
+def doc_space_editor(brwoswer_tab='season'):
     num_of_times_to_space = int(input("Number of times to space (default: 5): ") or '5')
     click(find_image('images/tabs/seasoninspired_chrome.png', 0.8))
-    # sleep(1)
-    x, y = position()
+    sleep(1)
+    # x, y = position()
 
     hotkey('enter')
     hotkey('enter')

@@ -1,5 +1,6 @@
 import re
 from pyperclip import copy, paste
+import sys
 from time import sleep
 
 def sort_forbidden(first_str: list[str], second_str: list[str]) -> list[str]:
@@ -32,13 +33,14 @@ def sort_forbidden(first_str: list[str], second_str: list[str]) -> list[str]:
 
     return not_moved + [""] + moved_to_end
 
-def remove_repetitions_app(keywords_text=None):
+def remove_repetitions_app(keywords_text:str=None, filter_str:str=""):
     if not keywords_text:
         keywords_text = paste()
-    keywords = re.split(r'[,\n]', keywords_text)
-    keywords = [keyword.strip() for keyword in keywords if keyword.strip()]
     
-    processed_items = [item.strip().lower() for item in keywords if item.strip()]
+    keywords = re.split(r'[,\n]', keywords_text)
+    filtered_keywords = [keyword.strip() for keyword in keywords if keyword.strip() and filter_str in keyword.strip()]
+    
+    processed_items = [item.strip().lower() for item in filtered_keywords if item.strip()]
     
     seen = set()
     unique_items:list[str] = []
