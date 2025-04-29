@@ -19,7 +19,7 @@ url = "https://api.groq.com/openai/v1/chat/completions"
 # Define the models to use for the API
 ai_models = {
     "thinking": "deepseek-r1-distill-llama-70b",
-    "normal": "llama-3.3-70b-specdec"
+    "normal": "meta-llama/llama-4-maverick-17b-128e-instruct"
 }
 
 headers = {

@@ -69,6 +69,8 @@ def pin_create_app(type_of_execution=1, thinking_model='y', browser_tab='season'
             sleep(1)
             if browser_tab == 'season':
                 click(find_image('images/tabs/seasoninspired_chrome.png', 0.8), duration=1)
+            elif browser_tab == 'midgeo':
+                click(find_image('images/tabs/midgeo_chrome.png', 0.9), duration=1)
             else:
                 click(find_image('images/tabs/red_chrome.png', 0.8), duration=1)
         elif type_of_execution == 2:  # Not managed, keeping original logic

@@ -24,7 +24,8 @@ def wordpress_paste_app(post_title:str, meta_description:str, keywords:str, post
     click(browswer_tab_loc, duration=0.5)
     sleep(0.5)
 
-    click(find_image('images/wp/main_title.png', confidence=0.8), duration=0.5)
+    add_description_loc = find_image('images/wp/main_title.png', confidence=0.5)
+    click(add_description_loc.left, add_description_loc.top + 150, duration=0.7)
     sleep(0.5)
     write(post_title)
 

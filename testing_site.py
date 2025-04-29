@@ -28,26 +28,19 @@
 
 # root.mainloop()
 
+# import GOOGLE_AI_STUDIO_KEY from env
+import os
+import dotenv
 
-import tkinter as tk
+dotenv.load_dotenv()
+gemini_api_key = os.getenv("GOOGLE_AI_STUDIO_KEY")
 
-root = tk.Tk()
-root.title("Button Design Example")
 
-# Create a customized button
-button1 = tk.Button(
-    root,
-    text="Click Me",
-    fg="white",          # Text color
-    bg="blue",           # Background color
-    font=("Helvetica", 16, "bold"),  # Font style and size
-    relief="raised",     # Border style
-    bd=4,                # Border width
-    padx=10,             # Horizontal padding
-    pady=5,              # Vertical padding
-    activebackground="darkblue",  # Background when button is pressed
-    activeforeground="yellow"       # Text color when button is pressed
+from google import genai
+
+client = genai.Client(api_key=gemini_api_key)
+
+response = client.models.generate_content(
+    model="gemini-2.0-flash", contents="Explain how AI works in a few words"
 )
-button1.pack(pady=20)
-
-root.mainloop()
+print(response)

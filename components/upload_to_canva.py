@@ -19,16 +19,14 @@ def upload_to_canva (number_of_image=4, downloaded_image_pos=0):
 
     # move to files
     todays_downloads = find_image('images/pin_upload/pic_select_2.png', 0.7)
-    moveTo((todays_downloads.left + 52) + (downloaded_image_pos * 112), todays_downloads.top + 50, duration=0.3)
-
+    moveTo((todays_downloads.left + 42) + (downloaded_image_pos * 112), todays_downloads.top, duration=0.3)
     # select files and paste to canva
     x, y = position()
-    dragTo(x+ (number_of_image * 110), y + 30, duration=2)
-    sys.exit()
+    dragTo(x+ (number_of_image * 105), y + 30, duration=2)
 
     canva_controls = find_image('images/canva/canva_control.png', 0.9)
     dragTo(canva_controls.left + 100, canva_controls.top + 100, duration=1.5)
-    sleep(number_of_image/1.6)
+    sleep(number_of_image/1.5)
 
     # # clone images
     for i in range (number_of_image-1):
@@ -42,18 +40,18 @@ def upload_to_canva (number_of_image=4, downloaded_image_pos=0):
             if i == j:
                 rightClick(duration=0.3)
                 def set_as_background():
-                    click(find_image("images/canva/set_as_backgroung.png", 0.9), duration=0.2)
+                    click(find_image("images/canva/set_as_backgroung.png", 0.9), duration=0.1)
 
                     if i == 0 and find_image("images/canva/set_as_backgroung.png", 0.9, 2, True) is not None:
                         return set_as_background()
                 set_as_background()
 
             else:
-                click(canva_controls.left + 200, canva_controls.top + 450, duration=0.2)
+                click(canva_controls.left + 200, canva_controls.top + 450, duration=0.1)
                 hotkey('delete')
         if i != number_of_image-1:
-            moveTo(canva_controls.left + 200, canva_controls.top + 450, duration=0.2)
-            scroll(screenHeight-40)
+            moveTo(canva_controls.left + 200, canva_controls.top + 450, duration=0.1)
+            scroll(screenHeight-55)
 
     # delete uploaded images
     click(download_files, duration=0.2)

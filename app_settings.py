@@ -124,7 +124,7 @@ class AutomationControllerApp:
         self.input_vars[1] = {
             'type_of_execution': tk.IntVar(value=1),
             'thinking_model': tk.StringVar(value='y'),
-            'browser_tab': tk.StringVar(value='season'),
+            'browser_tab': tk.StringVar(value='midgeo'),
             'title': tk.StringVar(),
             'download': tk.StringVar(value='y'),
             'upload': tk.StringVar(value='y'),
@@ -323,6 +323,7 @@ class AutomationControllerApp:
         ttk.Label(browser_frame, text="Browser tab:").pack(side='left', padx=(0, 10))
         ttk.Radiobutton(browser_frame, text="Season", variable=vars['browser_tab'], value='season').pack(side='left', padx=10)
         ttk.Radiobutton(browser_frame, text="Red", variable=vars['browser_tab'], value='red').pack(side='left', padx=10)
+        ttk.Radiobutton(browser_frame, text="Midgeo", variable=vars['browser_tab'], value='midgeo').pack(side='left', padx=10)
         
         # Title input (only shown for API)
         self.title_frame = ttk.Frame(options_frame)

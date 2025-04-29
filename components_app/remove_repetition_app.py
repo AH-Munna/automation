@@ -18,6 +18,8 @@ def sort_forbidden(first_str: list[str], second_str: list[str]) -> list[str]:
     moved_to_end = []
     not_moved = []
 
+    second_str = [item.lower() for item in second_str]
+
     for item_first in first_str:
         should_move = False
         for item_second in second_str:
@@ -38,18 +40,18 @@ def remove_repetitions_app(keywords_text:str=None, filter_str:str=""):
         keywords_text = paste()
     
     keywords = re.split(r'[,\n]', keywords_text)
-    filtered_keywords = [keyword.strip() for keyword in keywords if keyword.strip() and filter_str in keyword.strip()]
+    filter_str = filter_str.lower()
+    processed_items = [keyword.strip().lower() for keyword in keywords if keyword.strip()]
     
-    processed_items = [item.strip().lower() for item in filtered_keywords if item.strip()]
-    
+    filtered_items = [keyword for keyword in processed_items if filter_str in keyword]
     seen = set()
     unique_items:list[str] = []
-    for item in processed_items:
+    for item in filtered_items:
         if item not in seen:
             seen.add(item)
             unique_items.append(item)
     
-    processed_unique_items = sort_forbidden(unique_items, ["pinterest", "facebook", "image", "download", "gif", "reddit", "netflix", 'printable', 'free', 'pdf', 'tumblr', 'english'])
+    processed_unique_items = sort_forbidden(unique_items, ["pinterest", "facebook", "image", "download", "gif", "reddit", "netflix", 'printable', 'free', 'pdf', 'tumblr', 'english', 'Bangladesh'])
 
     final_list = []
     for item in processed_unique_items:
