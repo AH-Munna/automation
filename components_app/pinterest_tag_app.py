@@ -42,8 +42,11 @@ def paste_tag (browswer_loc):
     matched_tags_loc = find_image('images/matched-tags.png', 0.6)
     click(matched_tags_loc.left + 50, matched_tags_loc.top + 60)
 
-def publish_post (post_num=1):
-    find_image('images/tag-completed.png', 0.9)
+def publish_post (post_num=1, new_update=False):
+    if new_update:
+        find_image('images/pin_upload/tag-completed.png', 0.9)
+    else:
+        pass # TODO: update here
     sleep(1)
     click(screenWidth-110, 235, duration=1)
 
@@ -54,7 +57,7 @@ def publish_post (post_num=1):
     select_next_pin()
 
 # code starto
-def pinterest_tag_app(post_amount):
+def pinterest_tag_app(post_amount, new_update=False):
     def run_tagging():
         try:
             # play_audio('audio/tag_pin_start_jp_01.wav')
@@ -67,7 +70,7 @@ def pinterest_tag_app(post_amount):
                     sleep(0.2)
                     copy_tag(i, notepad_loc)
                     paste_tag(browser_loc)
-                publish_post(pin_num + 1)
+                publish_post(pin_num + 1, new_update)
         except Exception as e:
             messagebox.showerror("Error", f"An error occurred: {str(e)}")
 

@@ -139,6 +139,7 @@ class AutomationControllerApp:
         
         # Choice 3: Upload pin images
         self.input_vars[3] = {
+            'new_update': tk.StringVar(value='no'),
             'num_of_image': tk.StringVar(value='3'),
             'board_name': tk.StringVar(value=""),
             'board_pos': tk.StringVar(value='1')
@@ -146,7 +147,8 @@ class AutomationControllerApp:
         
         # Choice 4: Tag pins and publish them
         self.input_vars[4] = {
-            'number_of_pins': tk.StringVar(value='9')
+            'number_of_pins': tk.StringVar(value='9'),
+            'new_update': tk.StringVar(value='no')
         }
         
         # Choice 5: Remove keywords repetitions
@@ -412,6 +414,10 @@ class AutomationControllerApp:
         upload_frame = ttk.LabelFrame(self.input_frame, text="Upload Settings")
         upload_frame.pack(fill='x', padx=10, pady=10, anchor='w')
         
+        ttk.Label(upload_frame, text="New Update:").pack(side='left', padx=(0, 10))
+        ttk.Radiobutton(upload_frame, text="Yes", variable=vars['new_update'], value='yes').pack(side='left', padx=10)
+        ttk.Radiobutton(upload_frame, text="No", variable=vars['new_update'], value='no').pack(side='left', padx=10)
+        
         # Number of images
         num_frame = ttk.Frame(upload_frame)
         num_frame.pack(fill='x', padx=20, pady=5, anchor='w')
@@ -434,15 +440,22 @@ class AutomationControllerApp:
         """Create input fields for choice 4 - tag pins and publish them"""
         vars = self.input_vars[4]
         
-        # pin tag settings frame
-        wp_frame = ttk.LabelFrame(self.input_frame, text="pin number Settings")
-        wp_frame.pack(fill='x', padx=10, pady=10, anchor='w')
+        # Pin tag settings frame
+        tag_settings_frame = ttk.LabelFrame(self.input_frame, text="Pin Tagging Settings")
+        tag_settings_frame.pack(fill='x', padx=10, pady=10, anchor='w')
+        
+        # New Update option
+        new_update_frame = ttk.Frame(tag_settings_frame)
+        new_update_frame.pack(fill='x', padx=20, pady=5, anchor='w')
+        ttk.Label(new_update_frame, text="New Update:").pack(side='left', padx=(0, 10))
+        ttk.Radiobutton(new_update_frame, text="Yes", variable=vars['new_update'], value='yes').pack(side='left', padx=10)
+        ttk.Radiobutton(new_update_frame, text="No", variable=vars['new_update'], value='no').pack(side='left', padx=10)
         
         # number of pins input frame
-        number_of_pins_var = ttk.Frame(wp_frame)
-        number_of_pins_var.pack(fill='x', padx=20, pady=5, anchor='w')
-        ttk.Label(number_of_pins_var, text="number of pins:").pack(side='left', padx=(0, 10))
-        ttk.Entry(number_of_pins_var, textvariable=vars['number_of_pins'], width=50).pack(side='left', fill='x')
+        number_of_pins_frame = ttk.Frame(tag_settings_frame)
+        number_of_pins_frame.pack(fill='x', padx=20, pady=(10,5), anchor='w') # Added some top padding
+        ttk.Label(number_of_pins_frame, text="Number of pins:").pack(side='left', padx=(0, 10))
+        ttk.Entry(number_of_pins_frame, textvariable=vars['number_of_pins'], width=10).pack(side='left')
     
     def create_input_choice_5(self):
         """Create input fields for choice 5 - Remove keywords repetitions"""
@@ -641,6 +654,7 @@ class AutomationControllerApp:
         vars = self.input_vars[3]
         
         try:
+            new_update = bool(vars['new_update'].get() == 'yes')
             num_of_image = int(vars['num_of_image'].get())
             board_name = vars['board_name'].get()
             board_pos = int(vars['board_pos'].get())
@@ -648,18 +662,20 @@ class AutomationControllerApp:
             self.show_error_and_update_status("Number of images and board position must be integers")
             return
         
-        pinterest_upload_app(board_name=board_name, board_pos=board_pos, num_of_image=num_of_image)
+        pinterest_upload_app(board_name=board_name, board_pos=board_pos, num_of_image=num_of_image, new_update=new_update)
         self.task_executed()
     
     def execute_choice_4(self):
         """Execute choice 4 - Tag pins and publish them"""
         # play_audio('audio/tag_pin_options_en.wav')
         vars = self.input_vars[4]
-        number_of_pins = vars['number_of_pins'].get()
+        new_update_str = vars['new_update'].get()
+        new_update_bool = True if new_update_str == 'yes' else False
         
         try:
+            number_of_pins = int(vars['number_of_pins'].get())
             self.status_var.set("tagging pins...")
-            pinterest_tag_app(post_amount=int(number_of_pins))
+            pinterest_tag_app(post_amount=number_of_pins, new_update=new_update_bool)
             
             self.task_executed()
         except Exception as e:

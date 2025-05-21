@@ -20,7 +20,7 @@ def sort_forbidden(first_str: list[str], second_str: list[str]) -> list[str]:
         should_move = False
         for item_second in second_str:
             if item_second in item_first or re.search(r'\b(1[0-9]{3}|2[0-9]{3})\b', item_first):
-                print("\nsorting", item_first, "\n")
+                print("\nsorting", f'"{item_first}" = "{item_second}"', "\n")
                 should_move = True
                 break
         if should_move:
@@ -50,7 +50,7 @@ def remove_repetitions():
             seen.add(item)
             unique_items.append(item)
     
-    unique_items = sort_forbidden(unique_items, ["pinterest", "facebook", "image", "download", "gif", "reddit", "netflix", 'printable', 'free', 'pdf', 'tumblr'])
+    unique_items = sort_forbidden(unique_items, ["pinterest", "facebook", "image", "download", "gif", "reddit", "netflix", 'print', 'free', 'pdf', 'tumblr'])
 
     print("\033[32mUnique items:\033[0m")
     for item in unique_items:
