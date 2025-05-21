@@ -44,9 +44,9 @@ def paste_tag (browswer_loc):
 
 def publish_post (post_num=1, new_update=False):
     if new_update:
-        find_image('images/pin_upload/tag-completed.png', 0.9)
+        find_image('images/pin_upload/tag-completed-new.png', 0.9)
     else:
-        pass # TODO: update here
+        find_image('images/pin_upload/tag-completed.png', 0.9)
     sleep(1)
     click(screenWidth-110, 235, duration=1)
 
