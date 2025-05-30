@@ -148,7 +148,8 @@ class AutomationControllerApp:
         # Choice 4: Tag pins and publish them
         self.input_vars[4] = {
             'number_of_pins': tk.StringVar(value='9'),
-            'new_update': tk.StringVar(value='no')
+            'new_update': tk.StringVar(value='no'),
+            'custom_tags': tk.StringVar(value='')  # New variable for custom tags
         }
         
         # Choice 5: Remove keywords repetitions
@@ -456,6 +457,25 @@ class AutomationControllerApp:
         number_of_pins_frame.pack(fill='x', padx=20, pady=(10,5), anchor='w') # Added some top padding
         ttk.Label(number_of_pins_frame, text="Number of pins:").pack(side='left', padx=(0, 10))
         ttk.Entry(number_of_pins_frame, textvariable=vars['number_of_pins'], width=10).pack(side='left')
+
+        # Custom tags input using tk.Text (similar to choice 5)
+        custom_tags_label_frame = ttk.LabelFrame(tag_settings_frame, text="Custom Tags (9 non-empty lines required)")
+        custom_tags_label_frame.pack(fill='x', padx=20, pady=(10,5), anchor='w', expand=True)
+
+        text_frame_choice4 = ttk.Frame(custom_tags_label_frame)
+        text_frame_choice4.pack(fill='both', expand=True, pady=5, padx=5)
+
+        scrollbar_choice4 = ttk.Scrollbar(text_frame_choice4)
+        scrollbar_choice4.pack(side='right', fill='y')
+
+        self.custom_tags_text_widget_choice4 = tk.Text(
+            text_frame_choice4, 
+            height=10,  # Adjust height as needed
+            width=40,   # Adjust width as needed
+            yscrollcommand=scrollbar_choice4.set
+        )
+        self.custom_tags_text_widget_choice4.pack(side='left', fill='both', expand=True)
+        scrollbar_choice4.config(command=self.custom_tags_text_widget_choice4.yview)
     
     def create_input_choice_5(self):
         """Create input fields for choice 5 - Remove keywords repetitions"""
@@ -672,14 +692,30 @@ class AutomationControllerApp:
         new_update_str = vars['new_update'].get()
         new_update_bool = True if new_update_str == 'yes' else False
         
-        try:
-            number_of_pins = int(vars['number_of_pins'].get())
-            self.status_var.set("tagging pins...")
-            pinterest_tag_app(post_amount=number_of_pins, new_update=new_update_bool)
+        # Get custom tags from the Text widget
+        custom_tags_input = ""
+        if hasattr(self, 'custom_tags_text_widget_choice4'):
+            custom_tags_input = self.custom_tags_text_widget_choice4.get("1.0", tk.END)
+        
+        lines = custom_tags_input.splitlines()
+        processed_custom_tags = [line.strip() for line in lines if line.strip()]
+
+        processed_custom_tags_len = len(processed_custom_tags)
+        if processed_custom_tags_len != 9 and processed_custom_tags_len != 0:
+            self.show_error_and_update_status(f"Custom tags must contain exactly 9 non-empty lines. {processed_custom_tags_len} lines found.")
+            return
             
+        try:
+            self.status_var.set("Tagging pins...")
+            number_of_pins = int(vars['number_of_pins'].get())
+            pinterest_tag_app(
+                post_amount=number_of_pins, 
+                new_update=new_update_bool,
+                custom_tags=processed_custom_tags
+            )
             self.task_executed()
         except Exception as e:
-            self.show_error_and_update_status(f"Error pasting to pinterest: {str(e)}")
+            self.show_error_and_update_status(f"Error tagging pins: {str(e)}")
     
     def execute_choice_5(self):
         """Execute choice 5 - Remove keywords repetitions"""

@@ -5,7 +5,7 @@ import sys
 import threading
 from tkinter import messagebox
 # from pandas import read_clipboard, read_csv
-# from pyperclip import paste
+from pyperclip import paste, copy
 from helper.find_image import find_image
 from helper.play_audio import play_audio
 
@@ -20,20 +20,10 @@ def copy_tag (tag_num, notepad_loc):
     click(notepad_loc)
 
     moveTo(18, 85 + (tag_num * 36))
-    # if tag_num is not 0:
-    #     hotkey('down')
-
-    # hotkey('end')
-    # sleep(0.5)
-    # hotkey('ctrl', 'shift', 'left')
-    # sys.exit()
-
     click(clicks=3)
     hotkey('ctrl', 'c')
 
-def paste_tag (browswer_loc):
-    click(browswer_loc)
-
+def paste_tag ():
     tagbox_loc = find_image('images/tagbox-warning.png', 0.6)
     click(tagbox_loc.left + 100, tagbox_loc.top - 35)
     hotkey('ctrl', 'a')
@@ -57,20 +47,34 @@ def publish_post (post_num=1, new_update=False):
     select_next_pin()
 
 # code starto
-def pinterest_tag_app(post_amount, new_update=False):
+def pinterest_tag_app(post_amount, new_update:bool=False, custom_tags:list[str]=[]):
     def run_tagging():
         try:
             # play_audio('audio/tag_pin_start_jp_01.wav')
             # play_audio('audio/tag_pin_start_jp_02.wav')
+            custom_tags_len = len(custom_tags)
             browser_loc = find_image('images/tabs/pinterest_chrome.png', 0.8)
-            notepad_loc = find_image('images/tabs/notepad.png', 0.9)
-            for pin_num in range(post_amount):
-                sleep(2)
-                for i in range(9):
-                    sleep(0.2)
-                    copy_tag(i, notepad_loc)
-                    paste_tag(browser_loc)
-                publish_post(pin_num + 1, new_update)
+            if custom_tags_len == 9:
+                for pin_num in range(post_amount):
+                    sleep(2)
+                    for i in range(9):
+                        sleep(0.2)
+                        copy(custom_tags[i])
+                        if i == 0:
+                                click(browser_loc)
+                        paste_tag()
+                    publish_post(pin_num + 1, new_update)
+
+            else:
+                notepad_loc = find_image('images/tabs/notepad.png', 0.9)
+                for pin_num in range(post_amount):
+                    sleep(2)
+                    for i in range(9):
+                        sleep(0.2)
+                        copy_tag(i, notepad_loc)
+                        click(browser_loc)
+                        paste_tag()
+                    publish_post(pin_num + 1, new_update)
         except Exception as e:
             messagebox.showerror("Error", f"An error occurred: {str(e)}")
 

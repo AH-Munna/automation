@@ -2,7 +2,7 @@ from pyautogui import locateOnScreen
 from time import sleep
 import sys
 
-def find_image(image:str, confidence=0.9, tries=8, no_exit=False, long=False)-> dict[str, int]:
+def find_image(image:str, confidence=0.9, tries=8, no_exit=False, long=False):
     """
     looks for image on screen
     """
@@ -30,3 +30,6 @@ def find_image(image:str, confidence=0.9, tries=8, no_exit=False, long=False)-> 
         if image_loc:=try_to_find_image():
             break
     return image_loc
+
+
+# return type for find_image
