@@ -56,12 +56,12 @@ def pinterest_tag_app(post_amount, new_update:bool=False, custom_tags:list[str]=
             browser_loc = find_image('images/tabs/pinterest_chrome.png', 0.8)
             if custom_tags_len == 9:
                 for pin_num in range(post_amount):
+                    if pin_num == 0:
+                        click(browser_loc)
                     sleep(2)
                     for i in range(9):
                         sleep(0.2)
                         copy(custom_tags[i])
-                        if i == 0:
-                                click(browser_loc)
                         paste_tag()
                     publish_post(pin_num + 1, new_update)
 
