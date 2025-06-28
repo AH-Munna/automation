@@ -9,6 +9,7 @@ import time
 # Import required functions from your modules
 from components.ideogram_download import ideogram_download
 from components_app.pin_create_app import pin_create_app
+from components_app.pinterest_schedule_app import pinterest_schedule_app
 from components_app.pinterest_upload_app import pinterest_upload_app
 from components_app.pinterest_tag_app import pinterest_tag_app
 from components_app.doc_space_editor_app import doc_space_editor_app
@@ -131,10 +132,11 @@ class AutomationControllerApp:
             'position': tk.StringVar(value='0')
         }
         
-        # Choice 2: Download ideogram generated images
+        # Choice 2: Set Pinterest Schedule
         self.input_vars[2] = {
-            'upload': tk.StringVar(value='y'),
-            'position': tk.StringVar(value='0')
+            'num_of_pins': tk.StringVar(value='9'),
+            'schedule_time': tk.StringVar(value='14'),
+            'twice_per_day': tk.BooleanVar(value=False)
         }
         
         # Choice 3: Upload pin images
@@ -187,7 +189,7 @@ class AutomationControllerApp:
         # Tasks menu
         choices = [
             ("Create pin", 1),
-            ("Download ideogram images", 2),
+            ("Set Pinterest schedule", 2),
             ("Upload pin images", 3),
             ("Tag pins and publish", 4),
             ("Remove keyword repetitions", 5),
@@ -265,7 +267,7 @@ class AutomationControllerApp:
         # Update title and description based on choice
         titles = {
             1: "Create Pin Settings",
-            2: "Download Ideogram Settings",
+            2: "Pinterest Schedule Settings",
             3: "Upload Pin Settings",
             4: "Tag Pins Settings",
             5: "Remove Repetitions Tool",
@@ -277,7 +279,7 @@ class AutomationControllerApp:
         
         descriptions = {
             1: "Configure settings for creating a pin from deepseek to ideogram",
-            2: "Configure settings for downloading ideogram generated images",
+            2: "Set the schedule for publishing pins on Pinterest",
             3: "Configure settings for uploading pin images",
             4: "Configure settings for tagging pins and publishing them",
             5: "Remove repetitions from a list of keywords",
@@ -384,28 +386,28 @@ class AutomationControllerApp:
                 position_frame.pack_forget()
     
     def create_input_choice_2(self):
-        """Create input fields for choice 2 - Download ideogram generated images"""
+        """Create input fields for choice 2 - Set Pinterest schedule"""
         vars = self.input_vars[2]
         
-        # Processing options frame
-        processing_frame = ttk.LabelFrame(self.input_frame, text="Processing Options")
-        processing_frame.pack(fill='x', padx=10, pady=10, anchor='w')
+        # Schedule settings frame
+        schedule_frame = ttk.LabelFrame(self.input_frame, text="Schedule Settings")
+        schedule_frame.pack(fill='x', padx=10, pady=10, anchor='w')
         
-        # Upload to Canva checkbox
-        upload_check = ttk.Checkbutton(processing_frame, text="Upload to Canva", 
-                                     variable=vars['upload'], onvalue='y', offvalue='n',
-                                     command=lambda: self.toggle_position_visibility(2))
-        upload_check.pack(anchor='w', padx=20, pady=5)
+        # Number of pins
+        num_pins_frame = ttk.Frame(schedule_frame)
+        num_pins_frame.pack(fill='x', padx=20, pady=5, anchor='w')
+        ttk.Label(num_pins_frame, text="Number of Pins:").pack(side='left', padx=(0, 10))
+        ttk.Entry(num_pins_frame, textvariable=vars['num_of_pins'], width=10).pack(side='left')
         
-        # Position input frame
-        self.position_frame_2 = ttk.Frame(processing_frame)
-        self.position_frame_2.pack(fill='x', padx=20, pady=5, anchor='w')
+        # Schedule time
+        time_frame = ttk.Frame(schedule_frame)
+        time_frame.pack(fill='x', padx=20, pady=5, anchor='w')
+        ttk.Label(time_frame, text="Schedule Time (0-23, 0 is 12AM):").pack(side='left', padx=(0, 10))
+        ttk.Entry(time_frame, textvariable=vars['schedule_time'], width=10).pack(side='left')
         
-        ttk.Label(self.position_frame_2, text="Position:").pack(side='left', padx=(0, 10))
-        ttk.Entry(self.position_frame_2, textvariable=vars['position'], width=10).pack(side='left')
-        
-        # Set initial visibility based on checkbox state
-        self.toggle_position_visibility(2)
+        # Twice per day checkbox
+        ttk.Checkbutton(schedule_frame, text="Schedule twice per day", 
+                      variable=vars['twice_per_day'], onvalue=True, offvalue=False).pack(anchor='w', padx=20, pady=5)
     
     def create_input_choice_3(self):
         """Create input fields for choice 3 - Upload pin images"""
@@ -652,22 +654,28 @@ class AutomationControllerApp:
         self.task_executed()
     
     def execute_choice_2(self):
-        """Execute choice 2 - Download ideogram generated images"""
+        """Execute choice 2 - Set Pinterest schedule"""
         vars = self.input_vars[2]
-        confirm_upload_to_canva = vars['upload'].get()
         
         try:
-            downloaded_image_pos = int(vars['position'].get()) if confirm_upload_to_canva == 'y' else 0
+            num_of_pins = int(vars['num_of_pins'].get())
+            schedule_time = int(vars['schedule_time'].get())
+            if schedule_time < 0 or schedule_time > 23:
+                self.show_error_and_update_status("Schedule time must be between 0 and 23.")
+                return
+            
+
+            twice_per_day = vars['twice_per_day'].get()
+            
+            self.status_var.set("Setting Pinterest schedule...")
+            pinterest_schedule_app(
+                num_of_pins=num_of_pins,
+                schedule_time=schedule_time,
+                twice_per_day=twice_per_day
+            )
+            self.task_executed()
         except ValueError:
-            self.show_error_and_update_status("Position must be an integer")
-            return
-        
-        ideogram_download()
-        
-        if confirm_upload_to_canva == 'y':
-            upload_to_canva(downloaded_image_pos=downloaded_image_pos)
-        
-        self.task_executed()
+            self.show_error_and_update_status("Number of pins must be an integer.")
     
     def execute_choice_3(self):
         """Execute choice 3 - Upload pin images"""
