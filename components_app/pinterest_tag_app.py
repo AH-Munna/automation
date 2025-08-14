@@ -1,8 +1,10 @@
 from pyautogui import click, moveTo, hotkey
+from helper.get_path import get_resource_path
 from helper.pyscreensize import screenHeight, screenWidth
 from time import sleep
 import sys
 import threading
+import re
 from tkinter import messagebox
 # from pandas import read_clipboard, read_csv
 from pyperclip import paste, copy
@@ -23,20 +25,23 @@ def copy_tag (tag_num, notepad_loc):
     click(clicks=3)
     hotkey('ctrl', 'c')
 
-def paste_tag ():
-    tagbox_loc = find_image('images/tagbox-warning.png', 0.6)
+def paste_tag (tag_position=1):
+    tagbox_loc = find_image(get_resource_path('images/tagbox-warning.png'), 0.6)
     click(tagbox_loc.left + 100, tagbox_loc.top - 35)
     hotkey('ctrl', 'a')
     hotkey('ctrl', 'v')
+    sleep(0.5) # Wait for tag suggestions to load
 
-    matched_tags_loc = find_image('images/matched-tags.png', 0.6)
-    click(matched_tags_loc.left + 50, matched_tags_loc.top + 60)
+    matched_tags_loc = find_image(get_resource_path('images/matched-tags.png'), 0.9)
+    # Calculate the Y-coordinate based on the tag position
+    # Assuming the first tag is at a base offset of 60, and each subsequent tag is 36 pixels lower
+    click(matched_tags_loc.left + 50, matched_tags_loc.top + 60 + ((tag_position - 1) * 36))
 
 def publish_post (post_num=1, new_update=False):
     if new_update:
-        find_image('images/pin_upload/tag-completed-new.png', 0.9)
+        find_image(get_resource_path('images/pin_upload/tag-completed-new.png'), 0.95)
     else:
-        find_image('images/pin_upload/tag-completed.png', 0.9)
+        find_image(get_resource_path('images/pin_upload/tag-completed.png'), 0.95)
     sleep(1)
     click(screenWidth-110, 235, duration=1)
 
@@ -53,7 +58,7 @@ def pinterest_tag_app(post_amount, new_update:bool=False, custom_tags:list[str]=
             # play_audio('audio/tag_pin_start_jp_01.wav')
             # play_audio('audio/tag_pin_start_jp_02.wav')
             custom_tags_len = len(custom_tags)
-            browser_loc = find_image('images/tabs/pinterest_chrome.png', 0.8)
+            browser_loc = find_image(get_resource_path('images/tabs/pinterest_chrome.png'), 0.8)
             if custom_tags_len == 9:
                 for pin_num in range(post_amount):
                     if pin_num == 0:
@@ -61,12 +66,25 @@ def pinterest_tag_app(post_amount, new_update:bool=False, custom_tags:list[str]=
                     sleep(2)
                     for i in range(9):
                         sleep(0.2)
-                        copy(custom_tags[i])
-                        paste_tag()
+
+                        # --- custom_tags filtering and preparing ---
+                        tag_string = custom_tags[i]
+                        tag_position = 1
+                        
+                        # Use regex to find a number in parentheses at the end of the string
+                        match = re.search(r'\s*\((\d+)\)$', tag_string)
+                        if match:
+                            tag_position = int(match.group(1))
+                            tag_name = tag_string[:match.start()].strip()
+                        else:
+                            tag_name = tag_string.strip()
+
+                        copy(tag_name)
+                        paste_tag(tag_position)
                     publish_post(pin_num + 1, new_update)
 
             else:
-                notepad_loc = find_image('images/tabs/notepad.png', 0.9)
+                notepad_loc = find_image(get_resource_path('images/tabs/notepad.png'), 0.9)
                 for pin_num in range(post_amount):
                     sleep(2)
                     for i in range(9):

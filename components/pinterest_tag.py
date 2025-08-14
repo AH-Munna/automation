@@ -1,4 +1,5 @@
 from pyautogui import click, moveTo, hotkey
+from helper.get_path import get_resource_path
 from helper.pyscreensize import screenHeight, screenWidth
 from time import sleep
 import sys
@@ -32,16 +33,16 @@ def copy_tag (tag_num, notepad_loc):
 def paste_tag (browswer_loc):
     click(browswer_loc)
 
-    tagbox_loc = find_image('images/tagbox-warning.png', 0.6)
+    tagbox_loc = find_image(get_resource_path('images/tagbox-warning.png'), 0.6)
     click(tagbox_loc.left + 100, tagbox_loc.top - 35)
     hotkey('ctrl', 'a')
     hotkey('ctrl', 'v')
 
-    matched_tags_loc = find_image('images/matched-tags.png', 0.6)
+    matched_tags_loc = find_image(get_resource_path('images/matched-tags.png'), 0.6)
     click(matched_tags_loc.left + 50, matched_tags_loc.top + 60)
 
 def publish_post (post_num=1):
-    find_image('images/tag-completed.png', 0.9)
+    find_image(get_resource_path('images/tag-completed.png'), 0.9)
     sleep(1)
     click(screenWidth-110, 235, duration=1)
 
@@ -57,8 +58,8 @@ def pinterest_tag():
     try:
         post_amount = int(input("Number of posts to tag: "))
         play_audio('audio/tag_pin_start_en.wav')
-        browswer_loc = find_image('images/tabs/pinterest_chrome.png', 0.8)
-        notepad_loc = find_image('images/tabs/notepad.png', 0.9)
+        browswer_loc = find_image(get_resource_path('images/tabs/pinterest_chrome.png'), 0.8)
+        notepad_loc = find_image(get_resource_path('images/tabs/notepad.png'), 0.9)
         for pin_num in range(post_amount):
             sleep(2)
             for i in range(9):

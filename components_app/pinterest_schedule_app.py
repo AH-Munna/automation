@@ -1,4 +1,5 @@
 from pyautogui import click, moveTo, hotkey, scroll
+from helper.get_path import get_resource_path
 from helper.pyscreensize import screenHeight, screenWidth
 from time import sleep
 from datetime import datetime, timedelta
@@ -13,7 +14,7 @@ def _find_time_and_click(schedule_hour, am_pm, max_scrolls=24):
     Returns True if found and clicked, False otherwise.
     """
     for _ in range(max_scrolls):
-        time_loc = find_image(f'images/pin_schedule/times/{schedule_hour}{am_pm.lower()}.png', 0.98, tries=1, no_exit=True)
+        time_loc = find_image(get_resource_path(f'images/pin_schedule/times/{schedule_hour}{am_pm.lower()}.png'), 0.9, tries=1, no_exit=True)
         if time_loc:
             click(time_loc, duration=0.5)
             return True
@@ -24,7 +25,7 @@ def _find_time_and_click(schedule_hour, am_pm, max_scrolls=24):
 def _find_current_pin_loc(trying_times=0):
     if trying_times > 5:
         return None
-    current_pin_loc = find_image('images/pin_upload/next_pin.png', 0.8, tries=2, no_exit=True)
+    current_pin_loc = find_image(get_resource_path('images/pin_upload/next_pin.png'), 0.8, tries=2, no_exit=True)
     if current_pin_loc is None or current_pin_loc.top > (screenHeight - 320):
         moveTo(100, 500, duration=0.5)
         scroll(-500)
@@ -49,16 +50,16 @@ def pinterest_schedule_app(num_of_pins: int = 1, schedule_time:int = 13, twice_p
     start_date = datetime.today() + timedelta(days=1)
 
     # --- GUI Automation ---
-    click(find_image('images/tabs/pinterest_chrome.png', 0.8), duration=1)
+    click(find_image(get_resource_path('images/tabs/pinterest_chrome.png'), 0.8), duration=1)
 
     # --- Main Loop for Scheduling Pins ---
     for i in range(num_of_pins):
-        schedule_button = find_image('images/pin_schedule/schedule_off.png', 0.8, tries=1, no_exit=True)
+        schedule_button = find_image(get_resource_path('images/pin_schedule/schedule_off.png'), 0.8, tries=1, no_exit=True)
         if schedule_button is None:
             moveTo(screenWidth/2, screenHeight/2, duration=0.2)
             scroll(-500)
             sleep(0.2)
-            schedule_button = find_image('images/pin_schedule/schedule_off.png', 0.8, tries=2, no_exit=True)
+            schedule_button = find_image(get_resource_path('images/pin_schedule/schedule_off.png'), 0.8, tries=2, no_exit=True)
 
         if schedule_button:
             click(schedule_button, duration=0.5)
@@ -74,12 +75,12 @@ def pinterest_schedule_app(num_of_pins: int = 1, schedule_time:int = 13, twice_p
             current_am_pm = initial_am_pm
 
         # --- Set Date ---
-        calender_loc = find_image('images/pin_schedule/calender.png', 0.8, tries=2, no_exit=True)
+        calender_loc = find_image(get_resource_path('images/pin_schedule/calender.png'), 0.8, tries=2, no_exit=True)
         if calender_loc is None:
             moveTo(screenWidth/2, screenHeight/2, duration=0.2)
             scroll(-500)
             sleep(0.2)
-            calender_loc = find_image('images/pin_schedule/calender.png', 0.8, tries=2, no_exit=True)
+            calender_loc = find_image(get_resource_path('images/pin_schedule/calender.png'), 0.8, tries=2, no_exit=True)
             if calender_loc is None:
                 raise Exception(f"Calender not found for pin {i+1}")
             
@@ -90,7 +91,7 @@ def pinterest_schedule_app(num_of_pins: int = 1, schedule_time:int = 13, twice_p
         sleep(0.2) # Small pause after pasting
 
         # --- Set Time ---
-        clock_loc = find_image('images/pin_schedule/clock.png', 0.8)
+        clock_loc = find_image(get_resource_path('images/pin_schedule/clock.png'), 0.8)
         if clock_loc is None:
              raise Exception(f"Time field not found for pin {i+1}")
         

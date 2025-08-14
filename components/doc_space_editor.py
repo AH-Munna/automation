@@ -1,3 +1,4 @@
+from helper.get_path import get_resource_path
 from helper.groq_api import groq_title_divider, groq_prompt_gen
 from pyautogui import click, moveTo, hotkey, size, hotkey, locateOnScreen, write, position
 from time import sleep
@@ -8,7 +9,7 @@ from pyperclip import copy
 
 def doc_space_editor(brwoswer_tab='season'):
     num_of_times_to_space = int(input("Number of times to space (default: 5): ") or '5')
-    click(find_image('images/tabs/seasoninspired_chrome.png', 0.8))
+    click(find_image(get_resource_path('images/tabs/seasoninspired_chrome.png'), 0.8))
     sleep(1)
     # x, y = position()
 

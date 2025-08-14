@@ -525,6 +525,7 @@ class AutomationControllerApp:
         ttk.Radiobutton(browser_frame, text="Season", variable=vars['browser_tab'], value='season').pack(side='left', padx=10)
         ttk.Radiobutton(browser_frame, text="Red", variable=vars['browser_tab'], value='red').pack(side='left', padx=10)
         ttk.Radiobutton(browser_frame, text="voyager", variable=vars['browser_tab'], value='voyager').pack(side='left', padx=10)
+        ttk.Radiobutton(browser_frame, text="midgeos", variable=vars['browser_tab'], value='midgeos').pack(side='left', padx=10)
         
         # Number of lines
         lines_frame = ttk.Frame(process_frame)

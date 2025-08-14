@@ -1,17 +1,18 @@
 from pyautogui import click, moveTo, hotkey, size, hotkey, write, position, doubleClick
 from time import sleep
 from helper.find_image import find_image
+from helper.get_path import get_resource_path
 from helper.pyscreensize import screenHeight
 import sys
 from helper.play_audio import play_audio
 from threading import Thread
 
 def create_new():
-    click(find_image('images/pin_upload/new_pin.png', 0.8), duration=0.2)
-    click(find_image('images/pin_upload/pic_upload.png', 0.8), duration=0.2)
+    click(find_image(get_resource_path('images/pin_upload/new_pin.png'), 0.8), duration=0.2)
+    click(find_image(get_resource_path('images/pin_upload/pic_upload.png'), 0.8), duration=0.2)
 
     # selectable_image_loc = find_image('images/pin_upload/pic_select.png', 0.8)
-    selectable_image_loc = find_image('images/pin_upload/pic_select_2.png', 0.8)
+    selectable_image_loc = find_image(get_resource_path('images/pin_upload/pic_select_2.png'), 0.8)
     click(selectable_image_loc.left + 120, selectable_image_loc.top + 60, duration=0.2)
     # sleep(0.3)
     hotkey('delete')
@@ -25,17 +26,17 @@ def paste_texts(board_name, board_pos):
         click(input_loc.left + 100, input_loc.top + 50, duration=0.2)
         hotkey('ctrl', 'a')
         hotkey('win', 'v')
-        clipboard_loc = find_image('images/clipboard.png', 0.8)
+        clipboard_loc = find_image(get_resource_path('images/clipboard.png'), 0.8)
         click(clipboard_loc.left+150, clipboard_loc.top+top, duration=0.2)
 
-    handle_clipboard('images/pin_upload/pin-title.png', 330)
-    handle_clipboard('images/pin_upload/pin-description.png', 250)
-    handle_clipboard('images/pin_upload/pin-link.png', 180)
+    handle_clipboard(get_resource_path('images/pin_upload/pin-title.png'), 330)
+    handle_clipboard(get_resource_path('images/pin_upload/pin-description.png'), 250)
+    handle_clipboard(get_resource_path('images/pin_upload/pin-link.png'), 180)
 
     # board
-    pin_board_location = find_image('images/pin_upload/pin-board.png', 0.8)
+    pin_board_location = find_image(get_resource_path('images/pin_upload/pin-board.png'), 0.8)
     click(pin_board_location.left + 200, pin_board_location.top + 40, duration=0.2)
-    pin_search_location = find_image('images/pin_upload/pin-search.png', 0.8)
+    pin_search_location = find_image(get_resource_path('images/pin_upload/pin-search.png'), 0.8)
     click(pin_search_location.left + 200, pin_search_location.top + 40, duration=0.2)
 
     hotkey('ctrl', 'a')
@@ -54,7 +55,7 @@ def pinterest_upload():
     board_pos = int(input("Board position (default 1): ") or '1')
     # Thread(target=play_audio, args=('audio/pinterest_upload_start_en.wav',), daemon=True).start()
 
-    click(find_image('images/tabs/pinterest_chrome.png', 0.8))
+    click(find_image(get_resource_path('images/tabs/pinterest_chrome.png'), 0.8))
 
     for i in range(num_of_image):
         create_new()

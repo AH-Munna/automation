@@ -1,4 +1,5 @@
 from pyautogui import click, moveTo, hotkey, hotkey, position, dragTo, rightClick, scroll
+from helper.get_path import get_resource_path
 from helper.play_audio import play_audio
 from time import sleep
 import sys
@@ -11,23 +12,23 @@ def upload_to_canva (number_of_image=4, downloaded_image_pos=0):
 
     # setup tabs
     # if number_of_image != 4:
-    click(find_image('images/tabs/seasoninspired_chrome.png', 0.8), duration=0.5)
+    click(find_image(get_resource_path('images/tabs/seasoninspired_chrome.png'), 0.8), duration=0.5)
 
-    click(find_image('images/tabs/canva.png', 0.9), duration=0.5)
-    download_files = find_image('images/tabs/downloads_folder.png', 0.8)
-    click(download_files, duration=0.5)
+    click(find_image(get_resource_path('images/tabs/canva.png'), 0.9), duration=0.5)
+    download_files = find_image(get_resource_path('images/tabs/downloads_folder.png'), 0.8)
+    # click(download_files, duration=0.5)
 
     # move to files
-    todays_downloads = find_image('images/pin_upload/pic_select.png', 0.9)
-    moveTo((todays_downloads.left + 9) + (downloaded_image_pos * 106), todays_downloads.top + 100, duration=0.3)
+    # todays_downloads = find_image(get_resource_path('images/pin_upload/pic_select.png'), 0.9)
+    # moveTo((todays_downloads.left + 9) + (downloaded_image_pos * 106), todays_downloads.top + 100, duration=0.3)
     # select files and paste to canva
 
-    x, y = position()
-    dragTo(x+ (number_of_image * 105), y + 30, duration=2)
+    # x, y = position()
+    # dragTo(x+ (number_of_image * 105), y + 30, duration=1)
 
-    canva_controls = find_image('images/canva/canva_control.png', 0.9)
-    dragTo(canva_controls.left + 100, canva_controls.top + 100, duration=1.5)
-    sleep(number_of_image/1.5)
+    canva_controls = find_image(get_resource_path('images/canva/canva_control.png'), 0.9)
+    # dragTo(canva_controls.left + 100, canva_controls.top + 100, duration=1.5)
+    # sleep(number_of_image/1.5)
 
     # # clone images
     for i in range (number_of_image-1):
@@ -41,17 +42,17 @@ def upload_to_canva (number_of_image=4, downloaded_image_pos=0):
             if i == j:
                 rightClick(duration=0.3)
                 def set_as_background():
-                    click(find_image("images/canva/set_as_backgroung.png", 0.9), duration=0.15)
+                    click(find_image("images/canva/set_as_backgroung.png", 0.9, no_exit=True if i == 0 else False), duration=0.1)
 
                     if i == 0 and find_image("images/canva/set_as_backgroung.png", 0.9, 2, True) is not None:
                         return set_as_background()
                 set_as_background()
 
             else:
-                click(canva_controls.left + 200, canva_controls.top + 450, duration=0.15)
+                click(canva_controls.left + 200, canva_controls.top + 450, duration=0.1)
                 hotkey('delete')
         if i != number_of_image-1:
-            moveTo(canva_controls.left + 200, canva_controls.top + 450, duration=0.15)
+            moveTo(canva_controls.left + 200, canva_controls.top + 450, duration=0.1)
             scroll(screenHeight-55)
 
     # delete uploaded images

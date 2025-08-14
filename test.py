@@ -1,6 +1,24 @@
-from pyautogui import moveTo, click
-from helper.pyscreensize import screenHeight
-from helper.find_image import find_image
+from openai import OpenAI
+import dotenv
+import os
+dotenv.load_dotenv()
+API_KEY = os.getenv("GOOGLE_AI_STUDIO_KEY")
+print(API_KEY)
 
-click(find_image('images/tabs/pinterest_chrome.png', 0.8), duration=1)
-moveTo(100, screenHeight - 200, duration=1)
+client = OpenAI(
+    api_key=API_KEY,
+    base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
+)
+
+response = client.chat.completions.create(
+    model="gemini-2.5-flash",
+    messages=[
+        {"role": "system", "content": "You are a helpful assistant."},
+        {
+            "role": "user",
+            "content": "Explain to me how AI works"
+        }
+    ]
+)
+
+print(response.choices[0].message)

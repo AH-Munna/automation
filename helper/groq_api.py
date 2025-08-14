@@ -12,7 +12,8 @@ load_dotenv()
 api_key = os.getenv("GROQ_API_KEY")
 
 if not api_key:
-    raise ValueError("Please set the GROQ_API_KEY environment variable")
+    # raise ValueError("Please set the GROQ_API_KEY environment variable")
+    pass
 
 url = "https://api.groq.com/openai/v1/chat/completions"
 
