@@ -27,15 +27,31 @@ def copy_tag (tag_num, notepad_loc):
 
 def paste_tag (tag_position=1):
     tagbox_loc = find_image(get_resource_path('images/tagbox-warning.png'), 0.6)
-    click(tagbox_loc.left + 100, tagbox_loc.top - 35)
+    if not tagbox_loc:
+        tagbox_loc = find_image(get_resource_path('images/pin_tag/tagbox.png'), 0.6)
+
+    click_x = tagbox_loc.left + 100
+    click_y = tagbox_loc.top - 35
+    click(click_x, click_y)
     hotkey('ctrl', 'a')
     hotkey('ctrl', 'v')
     sleep(0.5) # Wait for tag suggestions to load
 
-    matched_tags_loc = find_image(get_resource_path('images/matched-tags.png'), 0.9)
-    # Calculate the Y-coordinate based on the tag position
-    # Assuming the first tag is at a base offset of 60, and each subsequent tag is 36 pixels lower
-    click(matched_tags_loc.left + 50, matched_tags_loc.top + 60 + ((tag_position - 1) * 36))
+    # On the new update, not_found_tag appears for a short time, and then disappears when suggestions are loaded.
+    # So we are checking if not_found_tag disappears.
+    found_not_found_tag = False
+    for _ in range(10):
+        if find_image(get_resource_path('images/pin_tag/not_found_tag.png'), 0.9, tries=2, no_exit=True):
+            sleep(0.5)
+            found_not_found_tag = True
+        else:
+            found_not_found_tag = False
+            break
+    
+    if not found_not_found_tag:
+        # if not_found_tag is not found, it means suggestions are loaded.
+        # click lower to select the suggestion.
+        click(click_x, click_y + (50 * tag_position))
 
 def publish_post (post_num=1, new_update=False):
     if new_update:
@@ -43,7 +59,7 @@ def publish_post (post_num=1, new_update=False):
     else:
         find_image(get_resource_path('images/pin_upload/tag-completed.png'), 0.95)
     sleep(1)
-    click(screenWidth-110, 235, duration=1)
+    click(screenWidth-110, 220, duration=1)
 
     sleep(0.5)
     moveTo((screenWidth/2) + 50, (screenHeight/2) + 150)

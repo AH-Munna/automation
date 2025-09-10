@@ -15,7 +15,7 @@ from components_app.pinterest_tag_app import pinterest_tag_app
 from components_app.doc_space_editor_app import doc_space_editor_app
 from components.upload_to_canva import upload_to_canva
 from components_app.remove_repetition_app import remove_repetitions_app
-from components_app.wordpress_paste_app import wordpress_paste_app
+# from components_app.wordpress_paste_app import wordpress_paste_app
 from helper.play_audio import play_audio
 
 class AutomationControllerApp:
@@ -758,7 +758,7 @@ class AutomationControllerApp:
         
         try:
             # Call your WordPress paste function here
-            wordpress_paste_app(post_title=post_title, meta_description=meta_description, keywords=keywords, post_content="", also_paste_content=also_paste_content == 'y')
+            # wordpress_paste_app(post_title=post_title, meta_description=meta_description, keywords=keywords, post_content="", also_paste_content=also_paste_content == 'y')
             # For example: wordpress_paste(also_paste_content=also_paste_content)
             
             # Placeholder for the actual implementation

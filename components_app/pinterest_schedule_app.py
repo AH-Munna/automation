@@ -97,7 +97,7 @@ def pinterest_schedule_app(num_of_pins: int = 1, schedule_time:int = 13, twice_p
         
         click(clock_loc.left - 100, clock_loc.top + 15, duration=0.5)
         moveTo(clock_loc.left - 50, clock_loc.top - 150, duration=0.5)
-        scroll(500) # Scroll to top of time list
+        # scroll(500) # Scroll to top of time list
         sleep(0.2)
 
         if not _find_time_and_click(schedule_time_12hr, current_am_pm):

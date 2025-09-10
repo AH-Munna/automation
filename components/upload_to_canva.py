@@ -32,7 +32,7 @@ def upload_to_canva (number_of_image=4, downloaded_image_pos=0):
 
     # # clone images
     for i in range (number_of_image-1):
-        click(canva_controls.left + 358, canva_controls.top + 15, duration=number_of_image/8)
+        click(canva_controls.left + 358, canva_controls.top + 15, duration=0.5)
 
     moveTo(canva_controls.left + 200, canva_controls.top + 400, duration=0.2)
 
@@ -53,7 +53,7 @@ def upload_to_canva (number_of_image=4, downloaded_image_pos=0):
                 hotkey('delete')
         if i != number_of_image-1:
             moveTo(canva_controls.left + 200, canva_controls.top + 450, duration=0.1)
-            scroll(screenHeight-55)
+            scroll(screenHeight - 59)
 
     # delete uploaded images
     click(download_files, duration=0.2)
