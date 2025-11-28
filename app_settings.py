@@ -1,3 +1,4 @@
+import select
 import tkinter as tk
 from tkinter import ttk, messagebox, simpledialog
 import sys
@@ -22,12 +23,14 @@ class AutomationControllerApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Automation Controller")
-        self.root.geometry("1200x700")
+        self.root.geometry("1366x768")
         self.setup_theme()
         
         # App state variables
-        self.choice_var = tk.IntVar(value=1)
+        self.choice_var = tk.IntVar(value=4)
         self.input_vars = {}
+        self.unlocked = True
+        self.os_var = tk.StringVar(value="ubuntu")
         
         # Create and configure main frames
         self.create_main_layout()
@@ -41,6 +44,9 @@ class AutomationControllerApp:
         
         # Setup status bar and footer
         self.setup_status_bar()
+
+        # Bind the unlock sequence
+        self.root.bind('<Control-l>', self.prompt_for_password)
         
         # Play welcome audio
         # threading.Thread(target=lambda: play_audio('audio/welcome_en.wav')).start()
@@ -176,28 +182,38 @@ class AutomationControllerApp:
     
         # Choice 8: upload to canva
         self.input_vars[8] = {
-            'num_of_image': tk.StringVar(value='10'),
+            'num_of_image': tk.StringVar(value='20'),
             'image_start_pos': tk.StringVar(value='0'),
         }
 
     def setup_navigation(self):
         """Set up the navigation sidebar"""
+        # Clear existing widgets in the navigation frame
+        for widget in self.nav_frame.winfo_children():
+            widget.destroy()
+
         # Navigation title
         nav_title = ttk.Label(self.nav_frame, text="Tasks", style='Title.TLabel')
         nav_title.pack(pady=(20, 15), padx=15, anchor='w')
         
         # Tasks menu
-        choices = [
-            ("Create pin", 1),
-            ("Set Pinterest schedule", 2),
-            ("Upload pin images", 3),
-            ("Tag pins and publish", 4),
-            ("Remove keyword repetitions", 5),
-            ("Edit doc space", 6),
-            ("Paste to WordPress", 7),
-            ("Upload to Canva", 8),
-            ("Exit", 9)
-        ]
+        if self.unlocked:
+            choices = [
+                ("Create pin", 1),
+                ("Set Pinterest schedule", 2),
+                ("Upload pin images", 3),
+                ("Tag pins and publish", 4),
+                ("Remove keyword repetitions", 5),
+                ("Edit doc space", 6),
+                ("Paste to WordPress", 7),
+                ("Upload to Canva", 8),
+                ("Exit", 9)
+            ]
+        else:
+            choices = [
+                ("Tag pins and publish", 4),
+                ("Exit", 9)
+            ]
         
         # Create a frame for the navigation buttons
         nav_buttons_frame = ttk.Frame(self.nav_frame, style='Nav.TFrame')
@@ -247,6 +263,14 @@ class AutomationControllerApp:
         self.status_label = ttk.Label(self.status_frame, textvariable=self.status_var, style='Status.TLabel')
         self.status_label.pack(side='left', padx=10, pady=5)
         
+        # OS selection frame
+        os_frame = ttk.Frame(self.footer_frame, style='TFrame')
+        os_frame.pack(side='left', padx=10, pady=10)
+
+        ttk.Label(os_frame, text="OS:").pack(side='left', padx=(0, 5))
+        ttk.Radiobutton(os_frame, text="Windows", variable=self.os_var, value='windows').pack(side='left')
+        ttk.Radiobutton(os_frame, text="Ubuntu", variable=self.os_var, value='ubuntu').pack(side='left')
+
         # Execute button in footer
         self.execute_button = ttk.Button(
             self.footer_frame,
@@ -661,6 +685,7 @@ class AutomationControllerApp:
         try:
             num_of_pins = int(vars['num_of_pins'].get())
             schedule_time = int(vars['schedule_time'].get())
+            selected_os = self.os_var.get()
             if schedule_time < 0 or schedule_time > 23:
                 self.show_error_and_update_status("Schedule time must be between 0 and 23.")
                 return
@@ -672,7 +697,8 @@ class AutomationControllerApp:
             pinterest_schedule_app(
                 num_of_pins=num_of_pins,
                 schedule_time=schedule_time,
-                twice_per_day=twice_per_day
+                twice_per_day=twice_per_day,
+                os=selected_os
             )
             self.task_executed()
         except ValueError:
@@ -681,6 +707,7 @@ class AutomationControllerApp:
     def execute_choice_3(self):
         """Execute choice 3 - Upload pin images"""
         vars = self.input_vars[3]
+        selected_os = self.os_var.get()
         
         try:
             new_update = bool(vars['new_update'].get() == 'yes')
@@ -691,7 +718,7 @@ class AutomationControllerApp:
             self.show_error_and_update_status("Number of images and board position must be integers")
             return
         
-        pinterest_upload_app(board_name=board_name, board_pos=board_pos, num_of_image=num_of_image, new_update=new_update)
+        pinterest_upload_app(board_name=board_name, board_pos=board_pos, num_of_image=num_of_image, new_update=new_update, os=selected_os)
         self.task_executed()
     
     def execute_choice_4(self):
@@ -700,6 +727,7 @@ class AutomationControllerApp:
         vars = self.input_vars[4]
         new_update_str = vars['new_update'].get()
         new_update_bool = True if new_update_str == 'yes' else False
+        selected_os = self.os_var.get()
         
         # Get custom tags from the Text widget
         custom_tags_input = ""
@@ -720,7 +748,8 @@ class AutomationControllerApp:
             pinterest_tag_app(
                 post_amount=number_of_pins, 
                 new_update=new_update_bool,
-                custom_tags=processed_custom_tags
+                custom_tags=processed_custom_tags,
+                os=selected_os
             )
             self.task_executed()
         except Exception as e:
@@ -743,49 +772,40 @@ class AutomationControllerApp:
             num_of_line = int(vars['num_of_process'].get())
             browser_tab = vars['browser_tab'].get()
             self.status_var.set("editing doc space...")
-            doc_space_editor_app(num_of_line, browser_tab)
+            doc_space_editor_app(num_of_line, browser_tab, os=self.os_var.get())
             self.task_executed()
         except ValueError:
             self.show_error_and_update_status("Number of lines must be an integer")
     
     def execute_choice_7(self):
         """Execute choice 7 - Paste to WordPress"""
-        vars = self.input_vars[7]
-        also_paste_content = vars['also_paste_content'].get()
-        post_title = vars['post_title'].get()
-        meta_description = vars['meta_description'].get()
-        keywords = vars['keywords'].get()
-        
-        try:
-            # Call your WordPress paste function here
-            # wordpress_paste_app(post_title=post_title, meta_description=meta_description, keywords=keywords, post_content="", also_paste_content=also_paste_content == 'y')
-            # For example: wordpress_paste(also_paste_content=also_paste_content)
-            
-            # Placeholder for the actual implementation
-            self.status_var.set("Pasting to WordPress...")
-            
-            # You'll need to create or import the actual function
-            # For now, just display a message
-            # messagebox.showinfo("WordPress", f"Content pasted to WordPress. Also paste content: {also_paste_content == 'y'}")
-            
-            self.task_executed()
-        except Exception as e:
-            self.show_error_and_update_status(f"Error pasting to WordPress: {str(e)}")
+        raise NotImplementedError("WordPress pasting functionality is not implemented yet.")
+        # vars = self.input_vars[7]
+        # also_paste_content = vars['also_paste_content'].get()
+        # post_title = vars['post_title'].get()
+        # meta_description = vars['meta_description'].get()
+        # keywords = vars['keywords'].get()
+        # try:
+        #     self.status_var.set("Pasting to WordPress...")
+        #     self.task_executed()
+        # except Exception as e:
+        #     self.show_error_and_update_status(f"Error pasting to WordPress: {str(e)}")
     
     def execute_choice_8(self):
         """Execute choice 8 - upload to canva"""
         vars = self.input_vars[8]
         num_of_image = vars['num_of_image'].get()
         image_start_pos = vars['image_start_pos'].get()
+        selected_os = self.os_var.get()
         
         try:
             # Call your WordPress paste function here
             self.status_var.set("uploading to canva...")
-            upload_to_canva(number_of_image=int(num_of_image), downloaded_image_pos=int(image_start_pos))
+            upload_to_canva(number_of_image=int(num_of_image), downloaded_image_pos=int(image_start_pos), os=selected_os)
             
             self.task_executed()
         except Exception as e:
-            self.show_error_and_update_status(f"Error pasting to WordPress: {str(e)}")
+            self.show_error_and_update_status(f"Error executing canva edit: {str(e)}")
 
     def show_error_and_update_status(self, message):
         """Show error message and update status bar"""
@@ -797,3 +817,11 @@ class AutomationControllerApp:
         self.status_var.set("Task completed successfully")
         play_audio('audio/task_completed_en.wav', wait=True)
         sys.exit()
+
+    def prompt_for_password(self, event=None):
+        password = simpledialog.askstring("Password", "Enter password:", show='*')
+        if password == "2424":
+            self.unlocked = True
+            self.setup_navigation()
+        else:
+            messagebox.showwarning("Incorrect Password", "The password you entered is incorrect.")
