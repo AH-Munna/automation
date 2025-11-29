@@ -48,7 +48,7 @@ def upload_to_canva (number_of_image=4, downloaded_image_pos=0, os="windows"):
 
     # # clone images
     for i in range (number_of_image-1):
-        click(canva_controls.left + 358, canva_controls.top + 17, duration=0.5)
+        click(canva_controls.left + 358, canva_controls.top + 17, duration=1)
 
     if os == "windows":
         moveTo(canva_controls.left + 230, canva_controls.top + 450, duration=0.5)
