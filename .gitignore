@@ -3,3 +3,5 @@ venv/
 .env
 tests
 pinterest/user_data/
+pinterest/state.json
+pinterest/login.py

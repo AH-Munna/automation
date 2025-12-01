@@ -5,6 +5,7 @@ import random
 from datetime import datetime, timedelta
 from dateutil import parser as date_parser
 import re
+import difflib
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
 
 # Configuration
@@ -399,17 +400,42 @@ def get_images():
     return [f for f in os.listdir(IMAGES_DIR) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
 
 def match_images(posts, images):
+    """
+    Matches images to the most probable post using fuzzy matching.
+    """
     matches = []
-    used_images = set()
-    for post in posts:
-        title_start = post['title'][:20].lower()
-        post_images = []
-        for img in images:
-            if img in used_images: continue
-            if title_start in os.path.splitext(img)[0].lower():
-                post_images.append(img)
-                used_images.add(img)
-        if post_images: matches.append({'post': post, 'images': post_images})
+    # Dictionary to group images by post index: {post_index: [images]}
+    post_matches = {}
+    
+    for img in images:
+        img_name = os.path.splitext(img)[0].lower()
+        
+        best_ratio = 0
+        best_post_idx = -1
+        
+        for i, post in enumerate(posts):
+            title = post['title'].lower()
+            # Calculate similarity ratio
+            ratio = difflib.SequenceMatcher(None, img_name, title).ratio()
+            
+            if ratio > best_ratio:
+                best_ratio = ratio
+                best_post_idx = i
+        
+        # You can set a threshold if needed, e.g., if best_ratio > 0.3
+        if best_post_idx != -1:
+            if best_post_idx not in post_matches:
+                post_matches[best_post_idx] = []
+            post_matches[best_post_idx].append(img)
+            # print(f"  [Match] '{img_name}' -> '{posts[best_post_idx]['title'][:30]}...' (Score: {best_ratio:.2f})")
+
+    # Convert to list format
+    for idx, img_list in post_matches.items():
+        matches.append({
+            'post': posts[idx],
+            'images': img_list
+        })
+        
     return matches
 
 def get_schedule_time(start_date, day_offset, time_str):
@@ -428,17 +454,9 @@ def get_schedule_time(start_date, day_offset, time_str):
 # --- Main Execution ---
 
 def run_automation():
+    # Load static data once
     tags = read_tags()
     posts, settings = parse_csv()
-    all_images = get_images()
-    matched_content = match_images(posts, all_images)
-    
-    if not matched_content:
-        print("No matching images found.")
-        return
-
-    print(f"Found {len(matched_content)} posts.")
-    print(f"Settings: {settings}")
     
     start_date = datetime.now().date() + timedelta(days=3)
     total_scheduled = 0
@@ -449,49 +467,76 @@ def run_automation():
     try:
         automator.go_to_create_page()
         
-        for item in matched_content:
-            post = item['post']
-            images = item['images']
+        while True:
+            # Refresh images list every iteration
+            all_images = get_images()
             
-            print(f"\nProcessing Post: {post['title'][:30]}...")
-            
-            for img_file in images:
-                img_path = os.path.join(IMAGES_DIR, img_file)
+            if not all_images:
+                print("\n[Info] Images folder is empty. Automation complete.")
+                break
                 
-                # Ensure we are on the create page
-                if "pin-creation-tool" not in automator.page.url:
+            print(f"\n[Info] Found {len(all_images)} images remaining in folder.")
+            
+            matched_content = match_images(posts, all_images)
+            
+            if not matched_content:
+                print("[Warning] Images exist but no matching posts found in CSV.")
+                print("Please check your CSV titles and image filenames.")
+                print("Expected match: Image Name (first 20 chars) == Pin Title (first 20 chars)")
+                break
+
+            print(f"[Info] Found {len(matched_content)} posts to process in this batch.")
+            
+            for item in matched_content:
+                post = item['post']
+                images = item['images']
+                
+                print(f"\nProcessing Post: {post['title'][:30]}...")
+                
+                for img_file in images:
+                    img_path = os.path.join(IMAGES_DIR, img_file)
+                    
+                    # Verify file still exists (it might have been deleted if matched multiple times erroneously, though logic prevents it)
+                    if not os.path.exists(img_path):
+                        continue
+
+                    # Ensure we are on the create page
+                    if "pin-creation-tool" not in automator.page.url:
+                        automator.go_to_create_page()
+                    
+                    # Execute Steps with Retry
+                    if not automator.upload_image(img_path): continue
+                    if not automator.fill_title(post['title']): continue
+                    if not automator.fill_description(post['description']): continue
+                    if not automator.add_tags(tags): continue
+                    if not automator.fill_link(settings.get('link')): continue
+                    if not automator.select_board(settings.get('board')): continue
+                    
+                    schedule_dt = get_schedule_time(start_date, total_scheduled, settings.get('time', '10:00 AM'))
+                    if not automator.set_schedule(schedule_dt): continue
+                    
+                    # Real Publish
+                    if not automator.publish(): continue
+                    
+                    # Wait for upload to complete (Drafts empty)
+                    if not automator.wait_for_completion():
+                        print("    [Warning] Upload might not have completed. Proceeding anyway...")
+                    
+                    # Cleanup
+                    try:
+                        os.remove(img_path)
+                        print(f"    [Cleanup] Deleted {img_file}")
+                    except Exception as e:
+                        print(f"    [Error] Could not delete image: {e}")
+                    
+                    # Reload page for next pin
                     automator.go_to_create_page()
-                
-                # Execute Steps with Retry
-                if not automator.upload_image(img_path): continue
-                if not automator.fill_title(post['title']): continue
-                if not automator.fill_description(post['description']): continue
-                if not automator.add_tags(tags): continue
-                if not automator.fill_link(settings.get('link')): continue
-                if not automator.select_board(settings.get('board')): continue
-                
-                schedule_dt = get_schedule_time(start_date, total_scheduled, settings.get('time', '10:00 AM'))
-                if not automator.set_schedule(schedule_dt): continue
-                
-                # Real Publish
-                if not automator.publish(): continue
-                
-                # Wait for upload to complete (Drafts empty)
-                if not automator.wait_for_completion():
-                    print("    [Warning] Upload might not have completed. Proceeding anyway...")
-                
-                # Cleanup
-                try:
-                    os.remove(img_path)
-                    print(f"    [Cleanup] Deleted {img_file}")
-                except Exception as e:
-                    print(f"    [Error] Could not delete image: {e}")
-                
-                # Reload page for next pin
-                automator.go_to_create_page()
-                
-                total_scheduled += 1
-                time.sleep(5) # Wait between pins
+                    
+                    total_scheduled += 1
+                    time.sleep(5) # Wait between pins
+            
+            # Small pause before re-scanning folder
+            time.sleep(2)
 
     except KeyboardInterrupt:
         print("\nStopped by user.")
