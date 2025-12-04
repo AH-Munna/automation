@@ -438,17 +438,52 @@ def match_images(posts, images):
         
     return matches
 
-def get_schedule_time(start_date, day_offset, time_str):
+def get_schedule_time(start_date, index, time_str, twice_daily=False):
+    """
+    Calculates the schedule datetime.
+    If twice_daily is True:
+      - Schedules 2 pins per day.
+      - First slot: Base hour AM.
+      - Second slot: Base hour PM.
+      - Base hour is derived from time_str % 12.
+    """
+    if twice_daily:
+        day_offset = index // 2
+        is_pm = (index % 2) == 1
+    else:
+        day_offset = index
+    
     target_date = start_date + timedelta(days=day_offset)
+    
     try:
-        if time_str.isdigit():
-            hour = int(time_str)
-            parsed_time = datetime.strptime(f"{hour}:00", "%H:%M").time()
+        if twice_daily:
+            # Extract base hour (0-11)
+            if time_str.isdigit():
+                h = int(time_str)
+            else:
+                # Try to parse "5 PM" etc
+                h = date_parser.parse(time_str).hour
+            
+            base_hour = h % 12
+            # 0 -> 12 AM, 3 -> 3 AM
+            
+            # Calculate final hour (AM or PM)
+            # AM = base_hour, PM = base_hour + 12
+            final_hour = base_hour + (12 if is_pm else 0)
+            
+            parsed_time = datetime.strptime(f"{final_hour}:00", "%H:%M").time()
+            
         else:
-            parsed_time = date_parser.parse(time_str).time()
-    except:
-        print(f"Warning: Could not parse time '{time_str}', defaulting to 10:00 AM")
+            # Original Logic (Once a day)
+            if time_str.isdigit():
+                hour = int(time_str)
+                parsed_time = datetime.strptime(f"{hour}:00", "%H:%M").time()
+            else:
+                parsed_time = date_parser.parse(time_str).time()
+    except Exception as e:
+        print(f"Warning: Could not parse time '{time_str}' ({e}), defaulting to 10:00 AM")
         parsed_time = datetime.strptime("10:00 AM", "%I:%M %p").time()
+
     return datetime.combine(target_date, parsed_time)
 
 # --- Main Execution ---
@@ -458,7 +493,20 @@ def run_automation():
     tags = read_tags()
     posts, settings = parse_csv()
     
-    start_date = datetime.now().date() + timedelta(days=3)
+    # User Input for Scheduling
+    print("\n--- Scheduling Configuration ---")
+    twice_input = input("Schedule twice a day? (y/n): ").lower().strip()
+    twice_daily = twice_input == 'y'
+    
+    if twice_daily:
+        print("Mode: Twice a day (AM/PM of the specified time).")
+    else:
+        print("Mode: Once a day.")
+
+    # Start from TOMORROW (1 day from today)
+    start_date = datetime.now().date() + timedelta(days=1)
+    print(f"Starting schedule from: {start_date}")
+    
     total_scheduled = 0
     
     automator = PinterestAutomator(headless=False)
@@ -496,7 +544,7 @@ def run_automation():
                 for img_file in images:
                     img_path = os.path.join(IMAGES_DIR, img_file)
                     
-                    # Verify file still exists (it might have been deleted if matched multiple times erroneously, though logic prevents it)
+                    # Verify file still exists
                     if not os.path.exists(img_path):
                         continue
 
@@ -512,7 +560,14 @@ def run_automation():
                     if not automator.fill_link(settings.get('link')): continue
                     if not automator.select_board(settings.get('board')): continue
                     
-                    schedule_dt = get_schedule_time(start_date, total_scheduled, settings.get('time', '10:00 AM'))
+                    # Calculate Schedule Time
+                    schedule_dt = get_schedule_time(
+                        start_date, 
+                        total_scheduled, 
+                        settings.get('time', '10:00 AM'),
+                        twice_daily=twice_daily
+                    )
+                    
                     if not automator.set_schedule(schedule_dt): continue
                     
                     # Real Publish
